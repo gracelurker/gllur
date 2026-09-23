@@ -9,7 +9,7 @@ name: GLLUR Instagram pull
 
 on:
   schedule:
-    - cron: "*/30 * * * *"   # every 30 min. Change to "*/15 * * * *" for every 15.
+    - cron: "*/15 * * * *"   # every 30 min. Change to "*/15 * * * *" for every 15.
   workflow_dispatch:          # adds a manual "Run workflow" button in the Actions tab
 
 permissions:
