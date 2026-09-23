@@ -1,18 +1,12 @@
-# ─────────────────────────────────────────────────────────────────────────────
-# GLLUR — scheduled Instagram pull
-# Runs the puller on a timer in GitHub's cloud (free), even when your laptop is
-# off, and commits the refreshed data back so the dashboard reads it.
-# Nothing secret lives in this file — the token and app keys come from the
-# repo's Settings ▸ Secrets and variables ▸ Actions.
-# ─────────────────────────────────────────────────────────────────────────────
 name: GLLUR Instagram pull
-#schedule
+
 on:
-    - cron: "*/15 * * * *"   # every 30 min. Change to "*/15 * * * *" for every 15.
-  workflow_dispatch:          # adds a manual "Run workflow" button in the Actions tab
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
 
 permissions:
-  contents: write             # lets the job commit the refreshed data/ files
+  contents: write
 
 jobs:
   pull:
