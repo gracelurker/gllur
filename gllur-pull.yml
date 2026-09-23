@@ -1,0 +1,44 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# GLLUR — scheduled Instagram pull
+# Runs the puller on a timer in GitHub's cloud (free), even when your laptop is
+# off, and commits the refreshed data back so the dashboard reads it.
+# Nothing secret lives in this file — the token and app keys come from the
+# repo's Settings ▸ Secrets and variables ▸ Actions.
+# ─────────────────────────────────────────────────────────────────────────────
+name: GLLUR Instagram pull
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # every 30 min. Change to "*/15 * * * *" for every 15.
+  workflow_dispatch:          # adds a manual "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write             # lets the job commit the refreshed data/ files
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install requests
+
+      - name: Pull Instagram metrics
+        env:
+          META_APP_ID:     ${{ secrets.META_APP_ID }}
+          META_APP_SECRET: ${{ secrets.META_APP_SECRET }}
+          IG_USER_ID:      ${{ secrets.IG_USER_ID }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+        run: python ig_metrics_puller.py
+
+      - name: Commit refreshed data
+        run: |
+          git config user.name  "gllur-bot"
+          git config user.email "gllur-bot@users.noreply.github.com"
+          git add data/
+          git diff --staged --quiet || git commit -m "data refresh $(date -u +%FT%TZ)"
+          git push
