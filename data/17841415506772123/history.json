@@ -1,3 +1,18 @@
 [
-  {"date":"2026-09-23","followers":2471,"posts":56,"reach":2668,"profile_views":2999,"website_clicks":37}
+  {
+    "date": "2026-09-23",
+    "followers": 2471,
+    "posts": 56,
+    "reach": 2668,
+    "profile_views": 2999,
+    "website_clicks": 37
+  },
+  {
+    "date": "2026-09-23",
+    "followers": 2471,
+    "posts": 56,
+    "reach": 2668,
+    "profile_views": 2999,
+    "website_clicks": 37
+  }
 ]
