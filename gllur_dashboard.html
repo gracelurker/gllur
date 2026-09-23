@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>GLLUR — Marketing Platform</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>window.GLLUR_DATA = {
+  "label": "GLLUR",
+  "ig_user_id": "gllur",
+  "pulled_at": "2026-09-23T15:30:00+0000",
+  "profile": { "username": "gllur", "followers_count": 2471, "follows_count": 2387, "media_count": 56 },
+  "account_insights": {
+    "reach": 2668,
+    "views": 17103,
+    "profile_views": 2999,
+    "website_clicks": 37,
+    "follower_count": 2471,
+    "accounts_engaged": 165,
+    "engagement_rate": 6.2
+  },
+  "best_time_label": "Mon 3pm",
+  "worst_time_label": "Late night",
+  "active_times_hourly": {"12a":158,"3a":656,"6a":1225,"9a":1361,"12p":1382,"3p":1441,"6p":1262,"9p":361},
+  "views_by_type": {"stories":70.7,"posts":29.4},
+  "interactions_by_type": {"posts":88.2,"stories":11.8},
+  "top_posts_views": [4900,723,681,429,345],
+  "top_posts_interactions": [153,5,5,4,2],
+  "facebook": {
+    "followers": 279,
+    "following": 9,
+    "views_28d": 2022,
+    "engagement_28d": 784,
+    "reactions": 28,
+    "comments": 59,
+    "shares": 0,
+    "visits_28d": 378,
+    "net_follows": 3,
+    "avg_post_reach": 292
+  },
+  "media": [
+    {"timestamp":"2026-09-13T12:00:00+0000","media_type":"CAROUSEL_ALBUM","like_count":150,"comments_count":3,"reach":4900,"saved":null,"shares":null,"engagement_rate":null},
+    {"timestamp":"2026-09-19T18:00:00+0000","media_type":"IMAGE","like_count":5,"comments_count":0,"reach":681,"saved":null,"shares":null,"engagement_rate":null},
+    {"timestamp":"2026-09-19T12:00:00+0000","media_type":"IMAGE","like_count":1,"comments_count":0,"reach":723,"saved":null,"shares":null,"engagement_rate":null},
+    {"timestamp":"2026-09-12T20:00:00+0000","media_type":"IMAGE","like_count":1,"comments_count":0,"reach":429,"saved":null,"shares":null,"engagement_rate":null},
+    {"timestamp":"2026-08-29T21:00:00+0000","media_type":"IMAGE","like_count":5,"comments_count":0,"reach":345,"saved":null,"shares":null,"engagement_rate":null},
+    {"timestamp":"2026-09-05T12:00:00+0000","media_type":"IMAGE","like_count":4,"comments_count":0,"reach":null,"saved":null,"shares":null,"engagement_rate":null},
+    {"timestamp":"2026-09-11T12:00:00+0000","media_type":"IMAGE","like_count":2,"comments_count":0,"reach":null,"saved":null,"shares":null,"engagement_rate":null}
+  ]
+};</script>
+<style>
+:root{
+  --bg:#04080f;--card:#0b1627;--card2:#0f1f38;
+  --border:#162b4a;--accent:#1a6bff;--accent2:#00c6a2;
+  --accent3:#ff6b35;--green:#00e676;--red:#ff3d3d;
+  --warn:#f5c518;--text:#c8d6e8;--text2:#5f7fa0;--white:#e6edf5;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{background:var(--bg);}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:transparent;color:var(--text);min-height:100vh;}
+/* subtle galaxy backdrop layers */
+#space-bg{position:fixed;inset:0;z-index:-1;pointer-events:none;display:block;}
+.space-tint{position:fixed;inset:0;z-index:-2;pointer-events:none;background:
+  radial-gradient(900px 720px at 78% -8%,rgba(26,107,255,.17),transparent 60%),
+  radial-gradient(820px 640px at 10% 6%,rgba(0,198,162,.11),transparent 58%),
+  radial-gradient(1100px 950px at 50% 118%,rgba(91,155,255,.11),transparent 60%);}
+.tape-wrap{background:#070e1c;border-bottom:1px solid var(--border);overflow:hidden;padding:7px 0;position:relative;}
+.tape-wrap::before,.tape-wrap::after{content:'';position:absolute;top:0;bottom:0;width:60px;z-index:2;}
+.tape-wrap::before{left:0;background:linear-gradient(90deg,#070e1c,transparent);}
+.tape-wrap::after{right:0;background:linear-gradient(270deg,#070e1c,transparent);}
+.tape{display:flex;gap:0;animation:scroll 38s linear infinite;width:max-content;}
+.tape:hover{animation-play-state:paused;}
+@keyframes scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.tick-item{display:flex;align-items:center;gap:8px;padding:0 22px;border-right:1px solid var(--border);white-space:nowrap;}
+.tick-sym{font-size:.78rem;font-weight:700;color:var(--white);}
+.tick-price{font-size:.78rem;font-weight:600;}
+.tick-chg{font-size:.72rem;font-weight:600;}
+.up{color:var(--green);}.down{color:var(--red);}.neutral{color:var(--warn);}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.6s ease-in-out infinite;display:inline-block;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
+header{background:linear-gradient(135deg,#060e1e 0%,#0a1f45 60%,#08265a 100%);border-bottom:1px solid var(--border);padding:18px 36px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.logo{display:flex;align-items:center;gap:12px;}
+.logo-icon{width:44px;height:44px;background:linear-gradient(135deg,#1a6bff,#00c6a2);border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.logo h1{font-size:1.25rem;color:var(--white);font-weight:700;letter-spacing:.3px;}
+.logo p{font-size:.7rem;color:var(--text2);letter-spacing:.9px;text-transform:uppercase;margin-top:2px;}
+.hdr-meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.badge{padding:4px 12px;border-radius:20px;font-size:.68rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;}
+.b-buy{background:rgba(0,230,118,.13);color:var(--green);border:1px solid rgba(0,230,118,.3);}
+.b-live{background:rgba(26,107,255,.13);color:#5b9bff;border:1px solid rgba(26,107,255,.3);display:flex;align-items:center;gap:5px;}
+.b-nasdaq{background:rgba(0,198,162,.12);color:var(--accent2);border:1px solid rgba(0,198,162,.3);}
+.hdr-clock{font-size:.75rem;color:var(--text2);}
+nav{background:var(--card);border-bottom:1px solid var(--border);padding:0 36px;display:flex;overflow-x:auto;gap:0;}
+.tab{padding:13px 20px;cursor:pointer;font-size:.82rem;color:var(--text2);border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap;font-weight:500;}
+.tab:hover{color:var(--white);}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
+main{padding:28px 36px;max-width:1440px;margin:0 auto;}
+.section{display:none;}.section.active{display:block;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-bottom:22px;}
+.g1{margin-bottom:22px;}
+@media(max-width:960px){.g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}}
+@media(max-width:520px){.g4,.g3{grid-template-columns:1fr}main{padding:16px 14px}header{padding:14px 16px}nav{padding:0 14px}}
+.card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:18px;}
+.csm{padding:14px;}
+.ctitle{font-size:.67rem;color:var(--text2);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;font-weight:600;}
+.cval{font-size:1.65rem;font-weight:800;color:var(--white);}
+.csub{font-size:.78rem;margin-top:4px;}
+.cnote{font-size:.72rem;color:var(--text2);margin-top:3px;}
+.sh{margin-bottom:18px;}
+.sh h2{font-size:1.1rem;color:var(--white);font-weight:700;}
+.sh p{font-size:.79rem;color:var(--text2);margin-top:3px;}
+.div{width:38px;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;margin-top:7px;}
+.cw{position:relative;height:270px;}
+.cwl{position:relative;height:330px;}
+.tw{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.8rem;}
+thead th{background:rgba(26,107,255,.1);color:var(--text2);padding:9px 13px;text-align:left;font-weight:600;font-size:.68rem;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);}
+tbody tr{border-bottom:1px solid rgba(22,43,74,.6);transition:background .15s;}
+tbody tr:hover{background:rgba(26,107,255,.05);}
+tbody td{padding:11px 13px;color:var(--text);vertical-align:middle;}
+.pill{display:inline-block;padding:2px 9px;border-radius:11px;font-size:.67rem;font-weight:700;}
+.pbuy{background:rgba(0,230,118,.13);color:var(--green);}
+.phold{background:rgba(245,197,24,.13);color:var(--warn);}
+.psell{background:rgba(255,61,61,.13);color:var(--red);}
+.pnda{background:rgba(255,107,53,.15);color:#ff9a70;}
+.pp3{background:rgba(26,107,255,.18);color:#7ab4ff;}
+.pok{background:rgba(0,198,162,.15);color:var(--accent2);}
+.vs-row{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:20px;flex-wrap:wrap;}
+.vsbadge{background:var(--card2);border:1px solid var(--border);border-radius:11px;padding:13px 22px;text-align:center;min-width:150px;}
+.vstick{font-size:1.3rem;font-weight:800;color:var(--accent);}
+.vsname{font-size:.7rem;color:var(--text2);margin-top:2px;}
+.vsprice{font-size:1.05rem;font-weight:700;color:var(--white);margin-top:5px;}
+.vscirc{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;color:#fff;flex-shrink:0;}
+.rb{display:flex;align-items:flex-start;gap:10px;padding:12px;background:var(--card2);border-radius:9px;margin-bottom:9px;}
+.rtit{font-size:.82rem;font-weight:700;color:var(--white);}
+.rdesc{font-size:.74rem;color:var(--text);margin-top:2px;line-height:1.5;}
+.bwrap{margin:10px 0;}
+.blbl{display:flex;justify-content:space-between;font-size:.72rem;color:var(--text2);margin-bottom:3px;}
+.bbar{height:7px;background:var(--border);border-radius:4px;overflow:hidden;}
+.bfill{height:100%;border-radius:4px;}
+.lpcard{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px 18px;display:flex;flex-direction:column;gap:2px;}
+.lptick{font-size:.67rem;color:var(--text2);font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.lpprice{font-size:1.9rem;font-weight:800;color:var(--white);}
+.lpchg{font-size:.85rem;font-weight:700;}
+.lprange{font-size:.7rem;color:var(--text2);margin-top:4px;}
+.lpcap{font-size:.7rem;color:var(--text2);}
+.hot{color:var(--warn);font-weight:700;}
+.tl{position:relative;padding-left:26px;}
+.tl::before{content:'';position:absolute;left:9px;top:0;bottom:0;width:2px;background:var(--border);}
+.tli{position:relative;margin-bottom:18px;}
+.tld{position:absolute;left:-21px;top:4px;width:11px;height:11px;border-radius:50%;border:2px solid var(--accent);background:var(--bg);}
+.tld.g{border-color:var(--green);}.tld.w{border-color:var(--warn);}.tld.r{border-color:var(--red);}
+.tldate{font-size:.67rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
+.tltit{font-size:.85rem;color:var(--white);font-weight:600;margin:3px 0;}
+.tldesc{font-size:.76rem;color:var(--text2);line-height:1.5;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+footer{text-align:center;padding:22px 36px;border-top:1px solid var(--border);font-size:.68rem;color:var(--text2);margin-top:36px;}
+footer strong{color:var(--text);}
+/* ════════ MARKETING (dark blue, scoped) ════════ */
+#tab-marketing{color:var(--text);}
+#tab-marketing .mkt-head{display:flex;align-items:center;gap:12px;margin-bottom:22px;}
+#tab-marketing .mkt-ico{width:44px;height:44px;border-radius:12px;background:rgba(26,107,255,.14);display:flex;align-items:center;justify-content:center;font-size:20px;}
+#tab-marketing .mkt-head h2{font-size:1.35rem;font-weight:700;color:var(--white);}
+#tab-marketing .mkt-head p{font-size:.74rem;color:var(--text2);margin-top:2px;}
+.mkt-kgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-bottom:24px;}
+.mkt-kpi{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;}
+.mkt-ktop{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.mkt-kicon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.mkt-badge{font-size:.66rem;font-weight:700;padding:3px 8px;border-radius:12px;}
+.mkt-up{background:rgba(0,230,118,.13);color:var(--green);}
+.mkt-warn{background:rgba(245,197,24,.13);color:var(--warn);}
+.mkt-neutral{background:rgba(26,107,255,.15);color:#7ab4ff;}
+.mkt-down{background:rgba(255,61,61,.13);color:var(--red);}
+.mkt-kval{font-size:1.65rem;font-weight:800;color:var(--white);letter-spacing:-.5px;line-height:1.1;}
+.mkt-klabel{font-size:.78rem;color:var(--text2);font-weight:500;margin-top:5px;}
+.mkt-kbench{font-size:.7rem;color:var(--text2);opacity:.8;margin-top:3px;}
+.mkt-row{display:grid;gap:18px;margin-bottom:24px;}
+.mkt-col2{grid-template-columns:2fr 1fr;}
+.mkt-eq{grid-template-columns:1fr 1fr;}
+@media(max-width:900px){.mkt-col2,.mkt-eq{grid-template-columns:1fr;}}
+.mkt-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;}
+.mkt-card h3{font-size:.92rem;font-weight:700;color:var(--white);margin-bottom:2px;}
+.mkt-card .mkt-sub{font-size:.7rem;color:var(--text2);margin-bottom:14px;}
+.mkt-cw{position:relative;width:100%;}
+.mkt-funnel{display:flex;flex-direction:column;gap:9px;padding:6px 0;}
+.mkt-frow{display:flex;align-items:center;gap:12px;}
+.mkt-flabel{width:120px;font-size:.74rem;font-weight:600;color:var(--text);text-align:right;}
+.mkt-fbw{flex:1;height:34px;background:var(--card2);border-radius:6px;overflow:hidden;}
+.mkt-fbar{height:100%;border-radius:6px;display:flex;align-items:center;padding-left:12px;font-size:.72rem;font-weight:700;color:#fff;}
+.mkt-fpct{width:52px;font-size:.7rem;font-weight:700;color:var(--text2);}
+.mkt-table{width:100%;border-collapse:collapse;font-size:.8rem;}
+.mkt-table th{text-align:left;padding:9px 14px;font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);border-bottom:1px solid var(--border);background:rgba(26,107,255,.1);}
+.mkt-table td{padding:11px 14px;border-bottom:1px solid rgba(22,43,74,.6);color:var(--text);vertical-align:middle;}
+.mkt-table tr:last-child td{border-bottom:none;}
+.mkt-table tr:hover td{background:rgba(26,107,255,.05);}
+.mkt-ml{font-weight:600;color:var(--white);}
+.mkt-divider{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text2);margin:26px 0 14px;display:flex;align-items:center;gap:10px;}
+.mkt-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.mkt-subnav{display:flex;gap:6px;overflow-x:auto;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:6px;margin-bottom:22px;}
+.mkt-subbtn{flex-shrink:0;padding:9px 15px;border-radius:8px;border:none;background:transparent;cursor:pointer;font-family:inherit;font-size:.78rem;font-weight:600;color:var(--text2);white-space:nowrap;transition:all .15s;}
+.mkt-subbtn:hover{background:var(--card2);color:var(--white);}
+.mkt-subbtn.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;}
+.mkt-panel{display:none;}
+.mkt-panel.active{display:block;}
+.mkt-ext{font-size:.74rem;font-weight:600;color:var(--accent);text-decoration:none;padding:7px 14px;border:1px solid var(--border);border-radius:8px;}
+.mkt-ext:hover{background:var(--card2);}
+.mkt-head .mkt-spacer{flex:1;}
+.mkt-prog{height:6px;background:var(--card2);border-radius:3px;overflow:hidden;margin-top:6px;}
+.mkt-progfill{height:100%;border-radius:3px;}
+.mkt-hm{display:grid;grid-template-columns:54px repeat(7,1fr);gap:3px;font-size:.6rem;}
+.mkt-hmh{text-align:center;padding:4px;font-weight:700;color:var(--text2);}
+.mkt-hml{display:flex;align-items:center;justify-content:flex-end;padding-right:6px;color:var(--text2);font-weight:600;}
+.mkt-hmc{height:28px;border-radius:4px;}
+.mkt-posts{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;}
+.mkt-post{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.mkt-ptop{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.mkt-ptype{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:3px 8px;border-radius:6px;}
+.mkt-pdate{font-size:.68rem;color:var(--text2);}
+.mkt-pcap{font-size:.74rem;color:var(--text);line-height:1.5;margin-bottom:12px;}
+.mkt-pm{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding-top:10px;border-top:1px solid var(--border);}
+.mkt-pmv{font-size:.85rem;font-weight:700;color:var(--white);text-align:center;}
+.mkt-pml{font-size:.6rem;color:var(--text2);text-align:center;margin-top:1px;}
+.mkt-er{font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(0,230,118,.13);color:var(--green);}
+.mkt-tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;margin-top:18px;}
+.mkt-tip{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;gap:12px;}
+.mkt-ttitle{font-size:.8rem;font-weight:700;color:var(--white);margin-bottom:3px;}
+.mkt-tdesc{font-size:.74rem;color:var(--text2);line-height:1.6;}
+.mkt-opp{border-radius:14px;padding:22px;margin-bottom:22px;border:2px dashed rgba(26,107,255,.35);background:rgba(26,107,255,.06);}
+.mkt-opp h3{font-size:1rem;font-weight:700;color:#7ab4ff;margin-bottom:6px;}
+.mkt-opp p{font-size:.78rem;line-height:1.7;margin-bottom:14px;color:var(--text);}
+.mkt-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;}
+.mkt-step{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;display:flex;gap:10px;}
+.mkt-stepnum{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;color:#fff;flex-shrink:0;background:var(--accent);}
+.mkt-steptitle{font-size:.74rem;font-weight:700;color:var(--white);margin-bottom:2px;}
+.mkt-stepdesc{font-size:.68rem;color:var(--text2);line-height:1.5;}
+.mkt-pages{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:14px;}
+.mkt-pg{padding:13px;background:var(--card2);border-radius:9px;}
+.mkt-pgname{font-size:.78rem;font-weight:700;color:var(--white);}
+.mkt-pgpath{font-size:.62rem;color:var(--accent);margin-bottom:3px;}
+.mkt-pgdesc{font-size:.68rem;color:var(--text2);line-height:1.5;}
+.mkt-seo{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.mkt-seo:last-child{border-bottom:none;}
+.mkt-bh{font-size:.6rem;font-weight:700;padding:3px 9px;border-radius:5px;white-space:nowrap;}
+.mkt-bh-high{background:rgba(0,230,118,.13);color:var(--green);}
+.mkt-bh-med{background:rgba(26,107,255,.13);color:#7ab4ff;}
+.mkt-seotitle{font-size:.78rem;font-weight:700;color:var(--white);margin-bottom:2px;}
+.mkt-seodesc{font-size:.72rem;color:var(--text2);line-height:1.6;}
+.mkt-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.mkt-tag{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;background:var(--card2);border-radius:16px;border:1px solid var(--border);font-size:.72rem;color:var(--text);}
+.mkt-tag .tg{color:var(--green);font-size:.6rem;font-weight:700;}
+.mkt-sets{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:22px;}
+.mkt-set{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;}
+.mkt-set h4{font-size:.8rem;font-weight:700;color:var(--white);margin-bottom:8px;}
+.mkt-settags{font-size:.72rem;color:var(--accent);line-height:1.9;margin-bottom:8px;word-break:break-word;}
+.mkt-setreach{font-size:.68rem;color:var(--green);font-weight:600;}
+.mkt-caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:14px;}
+.mkt-cap{padding:14px;background:var(--card2);border-radius:10px;border:1px solid var(--border);}
+.mkt-captype{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);margin-bottom:5px;}
+.mkt-captext{font-size:.72rem;color:var(--text);line-height:1.7;margin-bottom:6px;}
+.mkt-captip{font-size:.62rem;color:var(--green);font-style:italic;}
+.mkt-calgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px;}
+.mkt-cal{padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--card2);border-left:4px solid;}
+.mkt-calday{font-size:.66rem;font-weight:700;margin-bottom:3px;}
+.mkt-caltype{font-size:.72rem;font-weight:700;color:var(--white);margin-bottom:3px;}
+.mkt-calidea{font-size:.66rem;color:var(--text2);line-height:1.5;}
+.mkt-calplat{font-size:.6rem;color:var(--accent);margin-top:5px;font-weight:600;}
+.mkt-dark{background:linear-gradient(135deg,#0b1627,#0f2245);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:8px;}
+.mkt-dark h3{font-size:.95rem;font-weight:700;color:var(--white);margin-bottom:14px;}
+.mkt-trgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;}
+.mkt-trc{padding:14px;background:rgba(255,255,255,.04);border-radius:10px;border:1px solid rgba(255,255,255,.07);}
+.mkt-trtop{display:flex;justify-content:space-between;margin-bottom:6px;}
+.mkt-trname{font-size:.78rem;font-weight:700;color:var(--white);}
+.mkt-trg{font-size:.66rem;color:var(--green);font-weight:700;}
+.mkt-trd{font-size:.66rem;color:var(--text2);line-height:1.6;}
+.mkt-ai{display:grid;grid-template-columns:1fr 280px;gap:18px;}
+@media(max-width:900px){.mkt-ai{grid-template-columns:1fr;}}
+.mkt-chatbox{background:var(--card);border:1px solid var(--border);border-radius:14px;display:flex;flex-direction:column;height:500px;overflow:hidden;}
+.mkt-chatmsgs{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;}
+.mkt-msg{max-width:82%;padding:12px 16px;border-radius:14px;font-size:.78rem;line-height:1.7;white-space:pre-wrap;}
+.mkt-msg-a{align-self:flex-start;background:var(--card2);color:var(--text);border-bottom-left-radius:4px;}
+.mkt-msg-u{align-self:flex-end;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;border-bottom-right-radius:4px;}
+.mkt-chatbar{padding:14px 18px;border-top:1px solid var(--border);display:flex;gap:10px;}
+.mkt-chatbar input{flex:1;padding:10px 14px;border-radius:10px;border:1px solid var(--border);font-size:.78rem;outline:none;background:var(--card2);color:var(--text);font-family:inherit;}
+.mkt-send{padding:10px 18px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:700;font-size:.78rem;font-family:inherit;}
+.mkt-aiside{display:flex;flex-direction:column;gap:14px;}
+.mkt-qbox{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;}
+.mkt-qbox h4{font-size:.78rem;font-weight:700;margin-bottom:12px;color:var(--white);}
+.mkt-qbtn{display:block;width:100%;padding:9px 12px;border-radius:8px;border:1px solid var(--border);background:var(--card2);cursor:pointer;font-size:.72rem;color:var(--text);text-align:left;margin-bottom:7px;font-family:inherit;}
+.mkt-qbtn:hover{border-color:var(--accent);}
+.mkt-capbox{background:linear-gradient(135deg,#0b1627,#0f2245);border:1px solid var(--border);border-radius:14px;padding:18px;color:#fff;}
+.mkt-capbox h4{font-size:.78rem;font-weight:700;margin:0 0 8px;}
+.mkt-capbox ul{font-size:.68rem;line-height:2;color:var(--text2);padding-left:16px;}
+.mkt-typing{display:flex;gap:5px;padding:12px 16px;background:var(--card2);border-radius:14px;align-self:flex-start;}
+.mkt-tdot{width:7px;height:7px;border-radius:50%;background:var(--text2);opacity:.5;animation:bounce 1.4s ease-in-out infinite;}
+.mkt-tdot:nth-child(2){animation-delay:.2s;}.mkt-tdot:nth-child(3){animation-delay:.4s;}
+@keyframes bounce{0%,80%,100%{transform:translateY(0);}40%{transform:translateY(-5px);}}
+/* ════════ SPACE GATE — cinematic warp → galaxy breakthrough ════════ */
+#gate{position:fixed;inset:0;z-index:9999;overflow:hidden;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(1300px 900px at 50% 26%,#08214a 0%,#06112b 46%,#03070f 78%,#02040a 100%);
+  transition:opacity 1s cubic-bezier(.22,.61,.36,1);}
+#gate.gone{opacity:0;visibility:hidden;pointer-events:none;}
+body.gated{overflow:hidden;}
+#warp{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1;}
+/* distant galaxy that rushes forward on warp */
+.gate-galaxy{position:absolute;top:50%;left:50%;width:130vmax;height:130vmax;border-radius:50%;z-index:2;pointer-events:none;
+  mix-blend-mode:screen;opacity:.32;transform:translate(-50%,-50%) scale(.3);
+  background:radial-gradient(circle at 50% 50%,#ffffff 0%,#d7ecff 3%,rgba(120,190,255,.6) 9%,rgba(26,107,255,.32) 20%,rgba(0,198,162,.16) 33%,rgba(91,155,255,.12) 46%,transparent 62%);
+  transition:transform 1.7s cubic-bezier(.55,0,.3,1),opacity 1.3s ease;}
+.gate-galaxy::before{content:"";position:absolute;inset:-4%;border-radius:50%;
+  background:conic-gradient(from 0deg,transparent 0deg,rgba(120,190,255,.28) 28deg,transparent 72deg,rgba(0,198,162,.20) 138deg,transparent 184deg,rgba(91,155,255,.24) 250deg,transparent 300deg,rgba(120,190,255,.22) 342deg,transparent 360deg);
+  filter:blur(16px);animation:galSpin 26s linear infinite;}
+@keyframes galSpin{to{transform:rotate(1turn)}}
+#gate.warp .gate-galaxy{opacity:1;transform:translate(-50%,-50%) scale(3.4) rotate(46deg);}
+#gate.flash .gate-galaxy{opacity:0;transform:translate(-50%,-50%) scale(7.5) rotate(74deg);}
+.gate-tunnel{position:absolute;inset:0;z-index:3;pointer-events:none;opacity:0;transition:opacity 1s ease;
+  background:radial-gradient(circle at 50% 50%,transparent 26%,rgba(3,7,15,.5) 68%,#02040a 100%);}
+#gate.warp .gate-tunnel{opacity:1;}
+.gate-flash{position:absolute;inset:0;z-index:5;pointer-events:none;opacity:0;transition:opacity .5s ease;
+  background:radial-gradient(circle at 50% 50%,#ffffff 0%,#e3f1ff 20%,rgba(120,190,255,.55) 44%,transparent 74%);}
+#gate.flash .gate-flash{opacity:1;}
+.gate-ui{position:relative;z-index:6;display:flex;flex-direction:column;align-items:center;text-align:center;padding:24px;
+  transition:opacity .6s ease,transform .9s cubic-bezier(.22,.61,.36,1);}
+#gate.go .gate-ui{opacity:0;transform:scale(1.3);filter:blur(4px);}
+.gate-logo{margin-bottom:18px;filter:drop-shadow(0 14px 40px rgba(26,107,255,.5));opacity:0;animation:gRise 1.1s cubic-bezier(.22,.61,.36,1) .2s forwards;}
+.gate-logo svg{animation:gLogoFloat 5s ease-in-out infinite;}
+@keyframes gLogoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.gate-badge{font-size:.7rem;letter-spacing:.4em;text-transform:uppercase;color:#7fb0ff;margin-bottom:14px;opacity:0;animation:gFade 1s ease .25s forwards;}
+.gate-title{font-size:clamp(2.6rem,8.5vw,5.4rem);font-weight:800;line-height:1;letter-spacing:-.5px;color:var(--white);opacity:0;animation:gRise 1.1s cubic-bezier(.22,.61,.36,1) .4s forwards;text-shadow:0 0 60px rgba(26,107,255,.4);}
+.gate-title span{background:linear-gradient(135deg,#5b9bff,#00c6a2);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.gate-sub{color:var(--text2);font-size:clamp(.82rem,2vw,1rem);line-height:1.6;max-width:470px;margin:18px 0 32px;opacity:0;animation:gFade 1s ease .7s forwards;}
+.gate-enter{position:relative;font-family:inherit;font-weight:700;font-size:1rem;color:#fff;cursor:pointer;border:0;
+  padding:15px 40px;border-radius:50px;background:linear-gradient(135deg,#1a6bff,#00c6a2);overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.22),0 16px 44px -8px rgba(26,107,255,.85),0 0 70px -10px rgba(0,198,162,.5);
+  opacity:0;animation:gRise 1.1s cubic-bezier(.22,.61,.36,1) .95s forwards;transition:transform .25s ease,box-shadow .3s ease;display:inline-flex;align-items:center;gap:11px;}
+.gate-enter:hover{transform:translateY(-3px) scale(1.04);box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),0 22px 60px -8px rgba(26,107,255,1),0 0 100px -6px rgba(0,198,162,.9);}
+.gate-enter .arr{transition:transform .2s;}
+.gate-enter:hover .arr{transform:translateX(4px);}
+.gate-enter .ring{position:absolute;inset:0;border-radius:50px;border:1px solid rgba(255,255,255,.55);opacity:0;animation:gPulse 2.8s ease-out infinite;}
+.gate-enter[disabled]{cursor:progress;filter:saturate(.6) brightness(.85);}
+.gate-badges{display:flex;gap:8px;margin-top:24px;flex-wrap:wrap;justify-content:center;opacity:0;animation:gFade 1s ease 1.1s forwards;}
+.gate-hint{margin-top:22px;font-size:.66rem;letter-spacing:.28em;text-transform:uppercase;color:var(--text2);min-height:14px;opacity:0;animation:gFade 1s ease 1.2s forwards;}
+.gate-foot{font-size:.62rem;color:var(--text2);margin-top:18px;max-width:340px;line-height:1.6;opacity:0;animation:gFade 1s ease 1.35s forwards;}
+@keyframes gFade{to{opacity:1}}
+@keyframes gRise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+@keyframes gPulse{0%{opacity:.6;transform:scale(1)}100%{opacity:0;transform:scale(1.45)}}
+@media(max-width:520px){.gate-title{font-size:2.4rem;}}
+@media(prefers-reduced-motion:reduce){.gate-galaxy::before,.gate-logo svg{animation:none;}}
+</style>
+</head>
+<body class="gated">
+<!-- subtle galaxy backdrop -->
+<div class="space-tint"></div>
+<canvas id="space-bg"></canvas>
+
+<!-- ════════ SPACE GATE INTRO — warp through space into the platform ════════ -->
+<div id="gate">
+  <canvas id="warp"></canvas>
+  <div class="gate-galaxy"></div>
+  <div class="gate-tunnel"></div>
+  <div class="gate-flash"></div>
+  <div class="gate-ui">
+    <div class="gate-logo">
+      <svg width="104" height="104" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GLLUR logo">
+        <defs><linearGradient id="xyzBadge" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse"><stop stop-color="#1a6bff"/><stop offset="1" stop-color="#00c6a2"/></linearGradient></defs>
+        <rect x="6" y="6" width="108" height="108" rx="28" fill="url(#xyzBadge)"/>
+        <rect x="6" y="6" width="108" height="108" rx="28" fill="#ffffff" opacity="0.06"/>
+        <rect x="33" y="64" width="14" height="24" rx="3.5" fill="#ffffff" opacity="0.55"/>
+        <rect x="53" y="50" width="14" height="38" rx="3.5" fill="#ffffff" opacity="0.78"/>
+        <rect x="73" y="34" width="14" height="54" rx="3.5" fill="#ffffff" opacity="0.96"/>
+        <path d="M30 60 L50 47 L66 53 L89 32" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M77 32 L89 32 L89 44" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="gate-badge">Marketing Intelligence Platform</div>
+    <div class="gate-title">GL<span>LUR</span></div>
+    <p class="gate-sub">You're drifting at the edge of the data universe. Engage warp and break through into the marketing intelligence platform.</p>
+    <button class="gate-enter" id="gateEnter" disabled>
+      <span class="ring"></span>
+      <span id="gateLabel">Initializing&#8230;</span>
+      <span class="arr">&#8594;</span>
+    </button>
+    <div class="gate-badges">
+      <span class="badge b-live"><span class="live-dot"></span> Live Data</span>
+    </div>
+    <div class="gate-hint" id="gateHint">Calibrating starfield</div>
+    <div class="gate-foot">Sample demonstration dashboard with illustrative data.</div>
+  </div>
+</div>
+
+
+<header>
+  <div class="logo">
+    <div class="logo-icon"><svg width="26" height="26" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="64" width="14" height="24" rx="3.5" fill="#fff" opacity=".55"/><rect x="53" y="50" width="14" height="38" rx="3.5" fill="#fff" opacity=".8"/><rect x="73" y="34" width="14" height="54" rx="3.5" fill="#fff"/><path d="M30 60 L50 47 L66 53 L89 32" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div><h1>GLLUR Analytics</h1><p>Live Social Performance Platform</p></div>
+  </div>
+  <div class="hdr-meta">
+    <span class="badge b-live"><span class="live-dot"></span> Live Data</span>
+    <span class="hdr-clock" id="clock">Today</span>
+  </div>
+</header>
+
+<nav>
+  <div class="tab active" onclick="showTab('marketing',this)">Marketing Dashboard</div>
+</nav>
+
+<main>
+<section class="section active" id="tab-marketing">
+  <div class="mkt-head">
+    <div class="mkt-ico"><svg width="20" height="20" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="33" y="64" width="14" height="24" rx="3.5" fill="#5b9bff"/><rect x="53" y="50" width="14" height="38" rx="3.5" fill="#1a6bff"/><rect x="73" y="34" width="14" height="54" rx="3.5" fill="#00c6a2"/></svg></div>
+    <div><h2>Marketing &amp; Digital Performance</h2><p>Instagram, web &amp; campaign analytics</p></div>
+  </div>
+  <div class="mkt-subnav">
+    <button class="mkt-subbtn active" onclick="mktTab('overview',this)">Overview</button>
+    <button class="mkt-subbtn" onclick="mktTab('posts',this)">Post Performance</button>
+    <button class="mkt-subbtn" onclick="mktTab('instagram',this)">Instagram</button>
+    <button class="mkt-subbtn" onclick="mktTab('facebook',this)">Facebook</button>
+    <button class="mkt-subbtn" onclick="mktTab('benchmarks',this)">Benchmarks</button>
+    <button class="mkt-subbtn" onclick="mktTab('projections',this)">Projections</button>
+    <button class="mkt-subbtn" onclick="mktTab('trends',this)">Trends &amp; Ideas</button>
+    <button class="mkt-subbtn" onclick="mktTab('ai',this)">AI Assistant</button>
+  </div>
+
+  <!-- OVERVIEW -->
+  <div class="mkt-panel active" id="mkt-overview">
+    <div class="mkt-kgrid">
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(26,107,255,.12)"></div><span class="mkt-badge mkt-up">+3.2% MoM</span></div><div class="mkt-kval">13,200</div><div class="mkt-klabel">Total Audience</div><div class="mkt-kbench">IG 2,471 &#183; FB 279</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,198,162,.12)"></div><span class="mkt-badge mkt-up">vs 2.8% avg</span></div><div class="mkt-kval">3.4%</div><div class="mkt-klabel">Avg Engagement Rate</div><div class="mkt-kbench">Industry avg 2.8% &#183; +0.6pp</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,230,118,.1)"></div><span class="mkt-badge mkt-up">+6.4% MoM</span></div><div class="mkt-kval">18.2K</div><div class="mkt-klabel">Est. Monthly Reach</div><div class="mkt-kbench">Unique accounts reached</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(91,155,255,.12)"></div><span class="mkt-badge mkt-up">+11%</span></div><div class="mkt-kval">32</div><div class="mkt-klabel">Avg Saves / Post</div><div class="mkt-kbench">High-intent signal &#183; top 25%</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(245,197,24,.1)"></div><span class="mkt-badge mkt-warn">Underweight</span></div><div class="mkt-kval">279</div><div class="mkt-klabel">Facebook Followers</div><div class="mkt-kbench">Personal profile</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(26,107,255,.12)"></div><span class="mkt-badge mkt-up">+7.2%</span></div><div class="mkt-kval">9</div><div class="mkt-klabel">Avg Shares / Post</div><div class="mkt-kbench">Organic amplification rate</div></div>
+    </div>
+    <div class="mkt-row mkt-col2">
+      <div class="mkt-card"><h3>Marketing Funnel</h3><div class="mkt-sub">Awareness to Engagement to Intent &#183; estimated monthly figures</div><div class="mkt-funnel" id="mktFunnel"></div></div>
+      <div class="mkt-card"><h3>Platform Health Scores</h3><div class="mkt-sub">Composite across growth, engagement &amp; consistency</div><div class="mkt-cw" style="height:240px"><canvas id="cMkHealth"></canvas></div></div>
+    </div>
+    <div class="mkt-row mkt-eq">
+      <div class="mkt-card"><h3>Audience Growth</h3><div class="mkt-sub">Monthly followers &#183; solid = actual &#183; dashed = projected</div><div class="mkt-cw" style="height:240px"><canvas id="cMkGrowth"></canvas></div></div>
+      <div class="mkt-card"><h3>Monthly Reach vs. Impressions</h3><div class="mkt-sub">Reach = unique accounts &#183; Impressions = total views</div><div class="mkt-cw" style="height:240px"><canvas id="cMkReach"></canvas></div></div>
+    </div>
+    <div class="mkt-row mkt-eq">
+      <div class="mkt-card"><h3>Views by Content Type</h3><div class="mkt-sub">Share of views: Stories vs Posts</div><div class="mkt-cw" style="height:240px"><canvas id="cMkContent"></canvas></div></div>
+      <div class="mkt-card"><h3>Interactions by Content Type</h3><div class="mkt-sub">Where your interactions come from</div><div class="mkt-cw" style="height:240px"><canvas id="cMkEng"></canvas></div></div>
+    </div>
+    <div class="mkt-card">
+      <h3>Month-over-Month KPI Summary</h3><div class="mkt-sub">Key metrics vs. prior month and trend</div>
+      <table class="mkt-table" style="margin-top:12px">
+        <thead><tr><th>Metric</th><th>This Month</th><th>Last Month</th><th>Change</th><th>Trend</th><th>vs. Industry</th></tr></thead>
+        <tbody>
+          <tr><td class="mkt-ml">IG Followers</td><td>2,471</td><td>&mdash;</td><td><span class="mkt-badge mkt-neutral">28-day</span></td><td>Tracking started</td><td>&mdash;</td></tr>
+          <tr><td class="mkt-ml">Engagement Rate</td><td>3.4%</td><td>3.2%</td><td><span class="mkt-badge mkt-up">+0.2pp</span></td><td>Improving</td><td>+0.6pp above 2.8%</td></tr>
+          <tr><td class="mkt-ml">Monthly Reach</td><td>18,200</td><td>17,100</td><td><span class="mkt-badge mkt-up">+1,100 &#183; 6.4%</span></td><td>Growing</td><td>&mdash;</td></tr>
+          <tr><td class="mkt-ml">Avg Saves/Post</td><td>32</td><td>29</td><td><span class="mkt-badge mkt-up">+3 &#183; 10.3%</span></td><td>Strong</td><td>Top 25%</td></tr>
+          <tr><td class="mkt-ml">FB Followers</td><td>279</td><td>276</td><td><span class="mkt-badge mkt-up">+3</span></td><td>Steady</td><td>&mdash;</td></tr>
+          <tr><td class="mkt-ml">Profile Visits</td><td>2,940</td><td>2,710</td><td><span class="mkt-badge mkt-up">+230 &#183; 8.5%</span></td><td>Growing</td><td>&mdash;</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- POST PERFORMANCE -->
+  <div class="mkt-panel" id="mkt-posts">
+    <div class="mkt-head" style="margin-bottom:16px"><div><h2 style="font-size:1.05rem">Post Performance</h2><p>Top &amp; worst performing content &#183; optimal posting windows</p></div></div>
+    <div class="mkt-kgrid">
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(26,107,255,.12)"></div><span class="mkt-badge mkt-up">best format</span></div><div class="mkt-kval">4.9%</div><div class="mkt-klabel">Best Post ER (Reel)</div><div class="mkt-kbench">Account avg 3.4%</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(255,61,61,.1)"></div><span class="mkt-badge mkt-down">needs work</span></div><div class="mkt-kval">1.1%</div><div class="mkt-klabel">Worst Post ER</div><div class="mkt-kbench">Text-only announcement</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,230,118,.1)"></div><span class="mkt-badge mkt-up">peak window</span></div><div class="mkt-kval">Tue 12pm</div><div class="mkt-klabel">Best Time to Post</div><div class="mkt-kbench">Tue &amp; Wed 9am-12pm</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(245,197,24,.1)"></div><span class="mkt-badge mkt-warn">avoid</span></div><div class="mkt-kval">Sun 6am</div><div class="mkt-klabel">Weakest Window</div><div class="mkt-kbench">Weekends before 9am</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(91,155,255,.12)"></div></div><div class="mkt-kval">4.5x</div><div class="mkt-klabel">Top vs Worst Spread</div><div class="mkt-kbench">ER gap across posts</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,198,162,.12)"></div><span class="mkt-badge mkt-neutral">last 90d</span></div><div class="mkt-kval">42</div><div class="mkt-klabel">Posts Analyzed</div><div class="mkt-kbench">All formats, all platforms</div></div>
+    </div>
+    <div class="mkt-row mkt-eq">
+      <div class="mkt-card"><h3>Top Posts by Views</h3><div class="mkt-sub">Your highest-viewed posts &#183; last 30 days</div><div class="mkt-cw" style="height:260px"><canvas id="cPostFormat"></canvas></div></div>
+      <div class="mkt-card"><h3>Top Posts by Interactions</h3><div class="mkt-sub">Total interactions per post &#183; last 30 days</div><div class="mkt-cw" style="height:260px"><canvas id="cPostDay"></canvas></div></div>
+    </div>
+        <div class="mkt-divider">Top Performing Posts</div>
+    <div class="mkt-sub" style="margin:-6px 0 12px">Your best posts &#183; last 30 days</div>
+    <div class="mkt-posts">
+      <div class="mkt-post"><div class="mkt-ptop"><span class="mkt-ptype" style="background:rgba(26,107,255,.13);color:#5b9bff">Carousel</span><span class="mkt-pdate">Sep 13</span></div><div class="mkt-pcap">Your standout &mdash; 4.9K views, far above your typical post.</div><div class="mkt-pm"><div><div class="mkt-pmv">4,900</div><div class="mkt-pml">Views</div></div><div><div class="mkt-pmv">153</div><div class="mkt-pml">Interactions</div></div><div><div class="mkt-pmv"><span class="mkt-er">3.1%</span></div><div class="mkt-pml">ER</div></div></div></div>
+      <div class="mkt-post"><div class="mkt-ptop"><span class="mkt-ptype" style="background:rgba(0,198,162,.13);color:#00c6a2">Photo</span><span class="mkt-pdate">Sep 19</span></div><div class="mkt-pcap">Second-most interactions this period.</div><div class="mkt-pm"><div><div class="mkt-pmv">681</div><div class="mkt-pml">Views</div></div><div><div class="mkt-pmv">5</div><div class="mkt-pml">Interactions</div></div><div><div class="mkt-pmv"><span class="mkt-er">0.7%</span></div><div class="mkt-pml">ER</div></div></div></div>
+      <div class="mkt-post"><div class="mkt-ptop"><span class="mkt-ptype" style="background:rgba(0,198,162,.13);color:#00c6a2">Photo</span><span class="mkt-pdate">Aug 29</span></div><div class="mkt-pcap">Best engagement rate among your smaller posts.</div><div class="mkt-pm"><div><div class="mkt-pmv">345</div><div class="mkt-pml">Views</div></div><div><div class="mkt-pmv">5</div><div class="mkt-pml">Interactions</div></div><div><div class="mkt-pmv"><span class="mkt-er">1.4%</span></div><div class="mkt-pml">ER</div></div></div></div>
+    </div>
+    <div class="mkt-divider">Lowest Performing Posts</div>
+    <div class="mkt-posts">
+      <div class="mkt-post" style="border-left:3px solid #ff3d3d"><div class="mkt-ptop"><span class="mkt-ptype" style="background:rgba(255,61,61,.13);color:#ff6b6b">Photo</span><span class="mkt-pdate">Sep 19</span></div><div class="mkt-pcap">Decent views but almost no interactions &mdash; didn't prompt action.</div><div class="mkt-pm"><div><div class="mkt-pmv">723</div><div class="mkt-pml">Views</div></div><div><div class="mkt-pmv">1</div><div class="mkt-pml">Interactions</div></div><div><div class="mkt-pmv"><span style="color:#ff3d3d;font-weight:800">0.1%</span></div><div class="mkt-pml">ER</div></div></div></div>
+      <div class="mkt-post" style="border-left:3px solid #ff3d3d"><div class="mkt-ptop"><span class="mkt-ptype" style="background:rgba(255,61,61,.13);color:#ff6b6b">Photo</span><span class="mkt-pdate">Sep 12</span></div><div class="mkt-pcap">Low reach and low engagement.</div><div class="mkt-pm"><div><div class="mkt-pmv">429</div><div class="mkt-pml">Views</div></div><div><div class="mkt-pmv">1</div><div class="mkt-pml">Interactions</div></div><div><div class="mkt-pmv"><span style="color:#ff3d3d;font-weight:800">0.2%</span></div><div class="mkt-pml">ER</div></div></div></div>
+      <div class="mkt-post" style="border-left:3px solid #f5c518"><div class="mkt-ptop"><span class="mkt-ptype" style="background:rgba(245,197,24,.13);color:#f5c518">Photo</span><span class="mkt-pdate">Sep 11</span></div><div class="mkt-pcap">Only a couple of interactions this period.</div><div class="mkt-pm"><div><div class="mkt-pmv">&mdash;</div><div class="mkt-pml">Views</div></div><div><div class="mkt-pmv">2</div><div class="mkt-pml">Interactions</div></div><div><div class="mkt-pmv"><span style="color:#f5c518;font-weight:800">&mdash;</span></div><div class="mkt-pml">ER</div></div></div></div>
+    </div>
+    <div class="mkt-card" style="margin-bottom:22px">
+      <h3>What Separates Top from Bottom</h3><div class="mkt-sub">Patterns across the highest and lowest performing posts</div>
+      <table class="mkt-table" style="margin-top:12px">
+        <thead><tr><th>Factor</th><th>Top Posts</th><th>Worst Posts</th><th>Takeaway</th></tr></thead>
+        <tbody>
+          <tr><td class="mkt-ml">Format</td><td>Reel / Carousel</td><td>Text, link share</td><td>Lead with video or multi-frame</td></tr>
+          <tr><td class="mkt-ml">Opening hook</td><td>Question or result</td><td>Announcement</td><td>Open with a hook, not a notice</td></tr>
+          <tr><td class="mkt-ml">Caption length</td><td>60-120 words</td><td>Under 20 words</td><td>Give context, end with a question</td></tr>
+          <tr><td class="mkt-ml">Post time</td><td>Afternoon (~3pm)</td><td>Overnight</td><td>Your audience peaks midday-to-3pm</td></tr>
+          <tr><td class="mkt-ml">Saves</td><td>44-96 per post</td><td>3-11 per post</td><td>Useful &gt; promotional</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mkt-divider">Posting Cadence &amp; Optimal Times</div>
+    <div class="mkt-card">
+      <h3>Best Time to Post &mdash; Engagement Heatmap</h3><div class="mkt-sub">Darker = higher predicted engagement</div>
+      <div style="margin-top:16px" id="igHeatmap"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.66rem;color:var(--text2)">
+        <span>Low</span>
+        <div style="display:flex;gap:2px">
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(26,107,255,0.12)"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(26,107,255,0.3)"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(26,107,255,0.5)"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(26,107,255,0.72)"></div>
+          <div style="width:14px;height:14px;border-radius:3px;background:rgba(26,107,255,0.95)"></div>
+        </div>
+        <span>High</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTAGRAM -->
+  <div class="mkt-panel" id="mkt-instagram">
+    <div class="mkt-head" style="margin-bottom:16px"><div><h2 style="font-size:1.05rem;color:#5b9bff">Instagram Analytics</h2><p>@xyzcompany &#183; full breakdown</p></div><div class="mkt-spacer"></div><a class="mkt-ext" href="#" onclick="return false">View Profile</a></div>
+    <div class="mkt-kgrid">
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(26,107,255,.12)"></div><span class="mkt-badge mkt-up">+3.2% MoM</span></div><div class="mkt-kval">2,471</div><div class="mkt-klabel">Followers</div><div class="mkt-kbench">Last 28 days</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,230,118,.1)"></div><span class="mkt-badge mkt-up">+6.4%</span></div><div class="mkt-kval">18.2K</div><div class="mkt-klabel">Monthly Reach</div><div class="mkt-kbench">Unique accounts</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(91,155,255,.12)"></div><span class="mkt-badge mkt-up">+5.2%</span></div><div class="mkt-kval">47.0K</div><div class="mkt-klabel">Monthly Impressions</div><div class="mkt-kbench">2.58 impr. per reach</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,198,162,.12)"></div><span class="mkt-badge mkt-up">vs 2.8% avg</span></div><div class="mkt-kval">3.4%</div><div class="mkt-klabel">Engagement Rate</div><div class="mkt-kbench">(Interactions / Reach) x 100</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(26,107,255,.12)"></div><span class="mkt-badge mkt-up">+11%</span></div><div class="mkt-kval">32</div><div class="mkt-klabel">Avg Saves / Post</div><div class="mkt-kbench">High-intent signal</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(255,107,53,.1)"></div><span class="mkt-badge mkt-up">+8.5%</span></div><div class="mkt-kval">2,940</div><div class="mkt-klabel">Profile Visits / mo</div><div class="mkt-kbench">Visit-to-Follow rate ~1.8%</div></div>
+    </div>
+    <div class="mkt-row mkt-col2">
+      <div class="mkt-card"><h3>Reach vs. Impressions (Last 12 Months)</h3><div class="mkt-sub">Impressions exceed reach &mdash; content is being revisited</div><div class="mkt-cw" style="height:260px"><canvas id="cIgReach"></canvas></div></div>
+      <div class="mkt-card"><h3>Engagement Breakdown</h3><div class="mkt-sub">Share of total interactions by type</div><div class="mkt-cw" style="height:190px"><canvas id="cIgEng"></canvas></div><div style="margin-top:12px;display:flex;flex-direction:column;gap:7px" id="igEngList"></div></div>
+    </div>
+    <div class="mkt-row mkt-col2">
+      <div class="mkt-card"><h3>Follower Growth &amp; 6-Month Forecast</h3><div class="mkt-sub">At current rate: projected ~14,200 by Oct</div><div class="mkt-cw" style="height:250px"><canvas id="cIgGrowth"></canvas></div></div>
+      <div class="mkt-card"><h3>Content Type Performance</h3><div class="mkt-sub">Average engagement rate by post format</div><div class="mkt-cw" style="height:250px"><canvas id="cIgContent"></canvas></div></div>
+    </div>
+    <div class="mkt-divider">Story Performance</div>
+    <div class="mkt-kgrid" style="grid-template-columns:repeat(auto-fit,minmax(148px,1fr))">
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(26,107,255,.12)"></div><span class="mkt-badge mkt-up">Good</span></div><div class="mkt-kval">2,480</div><div class="mkt-klabel">Avg Story Views</div><div class="mkt-kbench">~19.9% of followers</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,198,162,.12)"></div><span class="mkt-badge mkt-up">Above avg</span></div><div class="mkt-kval">74%</div><div class="mkt-klabel">Completion Rate</div><div class="mkt-kbench">Industry avg 65-70%</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(255,61,61,.1)"></div><span class="mkt-badge mkt-neutral">Monitor</span></div><div class="mkt-kval">18%</div><div class="mkt-klabel">Exit Rate</div><div class="mkt-kbench">Swipe-away before finish</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(255,107,53,.1)"></div><span class="mkt-badge mkt-neutral">Normal</span></div><div class="mkt-kval">24%</div><div class="mkt-klabel">Forward Tap Rate</div><div class="mkt-kbench">Avg 20-30%</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,230,118,.1)"></div><span class="mkt-badge mkt-up">Strong</span></div><div class="mkt-kval">9%</div><div class="mkt-klabel">Back Tap Rate</div><div class="mkt-kbench">Replays &#183; higher = more interest</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(91,155,255,.12)"></div></div><div class="mkt-kval">28</div><div class="mkt-klabel">Replies / week</div><div class="mkt-kbench">DMs triggered by stories</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(26,107,255,.12)"></div><span class="mkt-badge mkt-neutral">Opportunity</span></div><div class="mkt-kval">120</div><div class="mkt-klabel">Link Taps / mo</div><div class="mkt-kbench">Tap-through rate ~11%</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,198,162,.12)"></div></div><div class="mkt-kval">680</div><div class="mkt-klabel">Profile Visits from Stories</div><div class="mkt-kbench">~23% of all profile visits</div></div>
+    </div>
+    <div class="mkt-row mkt-eq">
+      <div class="mkt-card"><h3>Story Views &mdash; Last 4 Weeks</h3><div class="mkt-sub">Daily avg views per story slide &#183; by week</div><div class="mkt-cw" style="height:210px"><canvas id="cIgStoryViews"></canvas></div></div>
+      <div class="mkt-card"><h3>Story Format Performance</h3><div class="mkt-sub">Avg views &amp; completion by story type</div><div class="mkt-cw" style="height:210px"><canvas id="cIgStoryType"></canvas></div></div>
+    </div>
+    <div class="mkt-card">
+      <h3>Story Interaction Breakdown by Format</h3><div class="mkt-sub">What drives viewer action per story type</div>
+      <table class="mkt-table" style="margin-top:12px">
+        <thead><tr><th>Story Type</th><th>Avg Views</th><th>Completion</th><th>Back Tap</th><th>Best Use</th></tr></thead>
+        <tbody>
+          <tr><td class="mkt-ml">Poll / Quiz</td><td>2,700</td><td><span class="mkt-badge mkt-up">81%</span></td><td>12%</td><td>Engagement, preference data</td></tr>
+          <tr><td class="mkt-ml">Question Box</td><td>2,400</td><td><span class="mkt-badge mkt-up">77%</span></td><td>11%</td><td>DM pipeline, FAQ content</td></tr>
+          <tr><td class="mkt-ml">Product Peek</td><td>2,600</td><td><span class="mkt-badge mkt-up">74%</span></td><td>9%</td><td>Teaser, drive profile visits</td></tr>
+          <tr><td class="mkt-ml">Link Sticker</td><td>2,100</td><td><span class="mkt-badge mkt-warn">62%</span></td><td>6%</td><td>Website traffic, sign-ups</td></tr>
+          <tr><td class="mkt-ml">Behind the Scenes</td><td>2,300</td><td><span class="mkt-badge mkt-up">70%</span></td><td>8%</td><td>Brand trust, humanize</td></tr>
+          <tr><td class="mkt-ml">Reshare / Mention</td><td>1,400</td><td><span class="mkt-badge mkt-warn">55%</span></td><td>4%</td><td>Social proof</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mkt-divider">Hashtag Performance</div>
+    <div class="mkt-card">
+      <h3>Hashtag Set Performance</h3><div class="mkt-sub">Estimated reach contribution and discovery rate per set</div>
+      <table class="mkt-table" style="margin-top:12px">
+        <thead><tr><th>Hashtag Set</th><th>Est. Reach</th><th>Discovery %</th><th>Eng. Lift</th><th>Recommended Use</th></tr></thead>
+        <tbody>
+          <tr><td class="mkt-ml">Product Showcase</td><td>20K-45K</td><td>~28%</td><td><span class="mkt-badge mkt-up">+14%</span></td><td>Feed posts, launches</td></tr>
+          <tr><td class="mkt-ml">Trending Discovery</td><td>30K-60K</td><td>~35%</td><td><span class="mkt-badge mkt-up">+21%</span></td><td>Reels, trending content</td></tr>
+          <tr><td class="mkt-ml">Niche / Category</td><td>10K-22K</td><td>~62%</td><td><span class="mkt-badge mkt-up">+31%</span></td><td>Targeted, high-intent posts</td></tr>
+          <tr><td class="mkt-ml">Education / Tips</td><td>15K-34K</td><td>~41%</td><td><span class="mkt-badge mkt-up">+18%</span></td><td>Carousel tips, how-tos</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- FACEBOOK -->
+  <div class="mkt-panel" id="mkt-facebook">
+    <div class="mkt-head" style="margin-bottom:16px"><div><h2 style="font-size:1.05rem;color:#5b9bff">Facebook Analytics</h2><p>GLLUR &#183; growth opportunity analysis</p></div><div class="mkt-spacer"></div><a class="mkt-ext" href="#" onclick="return false">View Page</a></div>
+    <div class="mkt-kgrid">
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(26,107,255,.12)"></div><span class="mkt-badge mkt-warn">vs peers</span></div><div class="mkt-kval">279</div><div class="mkt-klabel">Page Followers</div><div class="mkt-kbench">Personal profile</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,230,118,.1)"></div></div><div class="mkt-kval">~1,300</div><div class="mkt-klabel">Avg Post Reach</div><div class="mkt-kbench">Estimated organic</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(26,107,255,.12)"></div></div><div class="mkt-kval">~4.5%</div><div class="mkt-klabel">Page Reach Rate</div><div class="mkt-kbench">Reach / Followers</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,198,162,.12)"></div><span class="mkt-badge mkt-up">2.5K to tap</span></div><div class="mkt-kval">HIGH</div><div class="mkt-klabel">Cross-Promo Potential</div><div class="mkt-kbench">IG followers not on FB</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,230,118,.1)"></div><span class="mkt-badge mkt-up">90-day goal</span></div><div class="mkt-kval">1,500</div><div class="mkt-klabel">Target Followers</div><div class="mkt-kbench">+134% with strategy</div></div>
+      <div class="mkt-kpi"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(91,155,255,.12)"></div><span class="mkt-badge mkt-neutral">~$0 spend</span></div><div class="mkt-kval">Organic</div><div class="mkt-klabel">Growth Strategy</div><div class="mkt-kbench">Cross-promote from IG</div></div>
+    </div>
+    <div class="mkt-opp">
+      <h3>90-Day Facebook Growth Plan</h3>
+      <p>With 2,471 Instagram followers and only 279 on Facebook, there's a large untapped audience &mdash; and most growth levers are free.</p>
+      <div class="mkt-steps">
+        <div class="mkt-step"><div class="mkt-stepnum">1</div><div><div class="mkt-steptitle">Cross-promote from Instagram</div><div class="mkt-stepdesc">Add "Follow us on Facebook" to IG Stories weekly; run a FB-exclusive offer.</div></div></div>
+        <div class="mkt-step"><div class="mkt-stepnum">2</div><div><div class="mkt-steptitle">Invite contacts</div><div class="mkt-stepdesc">Use "Invite" to bring customers, partners, and vendors to like the page.</div></div></div>
+        <div class="mkt-step"><div class="mkt-stepnum">3</div><div><div class="mkt-steptitle">Native cross-posting</div><div class="mkt-stepdesc">Upload content directly to Facebook (not shared links) for ~3x better reach.</div></div></div>
+        <div class="mkt-step"><div class="mkt-stepnum">4</div><div><div class="mkt-steptitle">Engage relevant groups</div><div class="mkt-stepdesc">Comment in industry/community groups as the page to build recognition.</div></div></div>
+      </div>
+    </div>
+    <div class="mkt-row mkt-col2">
+      <div class="mkt-card"><h3>Follower Growth Projection</h3><div class="mkt-sub">Without strategy vs. with cross-promotion plan active</div><div class="mkt-cw" style="height:260px"><canvas id="cFbGrowth"></canvas></div></div>
+      <div class="mkt-card"><h3>Recommended Content Mix</h3><div class="mkt-sub">Optimal split for growing a new audience</div><div class="mkt-cw" style="height:190px"><canvas id="cFbPie"></canvas></div>
+        <table class="mkt-table" style="margin-top:12px"><thead><tr><th>Type</th><th>%</th><th>Why</th></tr></thead><tbody>
+          <tr><td>Photos / Albums</td><td>40%</td><td>Best organic reach</td></tr>
+          <tr><td>Videos</td><td>25%</td><td>Algorithm priority</td></tr>
+          <tr><td>Links (Blog)</td><td>20%</td><td>Drives site traffic</td></tr>
+          <tr><td>Text / Polls</td><td>15%</td><td>Low-effort engagement</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="mkt-tips">
+      <div class="mkt-tip"><div><div class="mkt-ttitle">Albums Get 2-3x More Reach</div><div class="mkt-tdesc">Create an album per launch or event. Facebook prioritizes multi-photo albums.</div></div></div>
+      <div class="mkt-tip"><div><div class="mkt-ttitle">Native Video Outperforms Links</div><div class="mkt-tdesc">Upload video directly rather than sharing links &mdash; ~3x more reach.</div></div></div>
+      <div class="mkt-tip"><div><div class="mkt-ttitle">Tag Location on Every Post</div><div class="mkt-tdesc">Location tags make posts discoverable in local search.</div></div></div>
+      <div class="mkt-tip"><div><div class="mkt-ttitle">Reviews Drive Discovery</div><div class="mkt-tdesc">Pages with 10+ reviews rank higher locally. Ask recent customers this week.</div></div></div>
+    </div>
+  </div>
+
+  <!-- BENCHMARKS -->
+  <div class="mkt-panel" id="mkt-benchmarks">
+    <div class="mkt-head" style="margin-bottom:16px"><div><h2 style="font-size:1.05rem">Industry Benchmarks &amp; Competitive Position</h2><p>Social marketing benchmarks &#183; sample</p></div></div>
+    <div class="mkt-kgrid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+      <div class="mkt-kpi" style="border-top:3px solid #00e676"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,230,118,.1)"></div><span class="mkt-badge mkt-up">Above Avg</span></div><div class="mkt-kval" style="color:#00e676">3.4%</div><div class="mkt-klabel">Engagement Rate</div><div class="mkt-kbench">Benchmark 2.8% &#183; +21%</div></div>
+      <div class="mkt-kpi" style="border-top:3px solid #00e676"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,230,118,.1)"></div><span class="mkt-badge mkt-up">Strong</span></div><div class="mkt-kval" style="color:#00e676">74%</div><div class="mkt-klabel">Story Completion</div><div class="mkt-kbench">Benchmark 65-70% &#183; top quartile</div></div>
+      <div class="mkt-kpi" style="border-top:3px solid #f5c518"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(245,197,24,.1)"></div><span class="mkt-badge mkt-warn">Below Avg</span></div><div class="mkt-kval" style="color:#f5c518">3-4x</div><div class="mkt-klabel">Posts per Week</div><div class="mkt-kbench">Top performers 5-7x</div></div>
+      <div class="mkt-kpi" style="border-top:3px solid #ff3d3d"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(255,61,61,.1)"></div><span class="mkt-badge mkt-down">Critical Gap</span></div><div class="mkt-kval" style="color:#f5c518">279</div><div class="mkt-klabel">Facebook Followers</div><div class="mkt-kbench">Personal profile</div></div>
+      <div class="mkt-kpi" style="border-top:3px solid #f5c518"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(245,197,24,.1)"></div><span class="mkt-badge mkt-warn">Opportunity</span></div><div class="mkt-kval" style="color:#f5c518">~30%</div><div class="mkt-klabel">Video / Reels Share</div><div class="mkt-kbench">Top performers 50-60%</div></div>
+      <div class="mkt-kpi" style="border-top:3px solid #00e676"><div class="mkt-ktop"><div class="mkt-kicon" style="background:rgba(0,230,118,.1)"></div><span class="mkt-badge mkt-up">Strong</span></div><div class="mkt-kval" style="color:#00e676">1.2%</div><div class="mkt-klabel">Save Rate</div><div class="mkt-kbench">Benchmark 0.5-0.8% &#183; top quartile</div></div>
+    </div>
+    <div class="mkt-card" style="margin-bottom:22px">
+      <h3>GLLUR vs. Industry Benchmarks</h3><div class="mkt-sub">Accounts in the 10K-20K follower range</div>
+      <table class="mkt-table" style="margin-top:12px">
+        <thead><tr><th>Metric</th><th>GLLUR</th><th>Industry Avg</th><th>Top 25%</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td class="mkt-ml">Engagement Rate</td><td><b>3.4%</b></td><td>2.8%</td><td>4.5%</td><td><span class="mkt-badge mkt-up">Above avg</span></td><td>Push to 4.5% with Reels</td></tr>
+          <tr><td class="mkt-ml">Follower Growth (MoM)</td><td><b>3.2%</b></td><td>3-5%</td><td>8-12%</td><td><span class="mkt-badge mkt-neutral">Average</span></td><td>Increase posting cadence</td></tr>
+          <tr><td class="mkt-ml">Save Rate</td><td><b>1.2%</b></td><td>0.5%</td><td>1.2%</td><td><span class="mkt-badge mkt-up">Top</span></td><td>More educational carousels</td></tr>
+          <tr><td class="mkt-ml">Story Completion</td><td><b>74%</b></td><td>65%</td><td>78%</td><td><span class="mkt-badge mkt-up">Above avg</span></td><td>Add polls/questions</td></tr>
+          <tr><td class="mkt-ml">Reels Share of Content</td><td><b>~30%</b></td><td>40%</td><td>55%</td><td><span class="mkt-badge mkt-warn">Gap</span></td><td>3-4 Reels/week</td></tr>
+          <tr><td class="mkt-ml">Post Frequency / week</td><td><b>3-4x</b></td><td>4-5x</td><td>6-7x</td><td><span class="mkt-badge mkt-warn">Below</span></td><td>Aim for 5x/week</td></tr>
+          <tr><td class="mkt-ml">Facebook Followers</td><td><b>279</b></td><td>&mdash;</td><td>500+</td><td><span class="mkt-badge mkt-neutral">Grow</span></td><td>Cross-promote from IG</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mkt-row mkt-eq">
+      <div class="mkt-card"><h3>Performance vs. Benchmarks</h3><div class="mkt-sub">GLLUR score vs. industry average (indexed to ~60)</div><div class="mkt-cw" style="height:300px"><canvas id="cBenchRadar"></canvas></div></div>
+      <div class="mkt-card"><h3>Priority Action Matrix</h3><div class="mkt-sub">Ranked by impact vs. effort</div>
+        <table class="mkt-table" style="margin-top:12px"><thead><tr><th>Action</th><th>Impact</th><th>Effort</th><th>Priority</th></tr></thead><tbody>
+          <tr><td>Grow Facebook (cross-promote)</td><td>High</td><td>Low</td><td><span class="mkt-badge mkt-up">#1 Now</span></td></tr>
+          <tr><td>Increase Reels frequency</td><td>High</td><td>Med</td><td><span class="mkt-badge mkt-up">#2 Now</span></td></tr>
+          <tr><td>Connect Google Analytics</td><td>High</td><td>Low</td><td><span class="mkt-badge mkt-up">#3 Now</span></td></tr>
+          <tr><td>Blog content (2x/month)</td><td>High</td><td>High</td><td><span class="mkt-badge mkt-warn">#4 Plan</span></td></tr>
+          <tr><td>Post 5x/week</td><td>Med</td><td>Med</td><td><span class="mkt-badge mkt-warn">#5 Plan</span></td></tr>
+          <tr><td>Strengthen bio + CTA</td><td>Low</td><td>Low</td><td><span class="mkt-badge mkt-neutral">#6 Quick</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROJECTIONS -->
+  <div class="mkt-panel" id="mkt-projections">
+    <div class="mkt-head" style="margin-bottom:16px"><div><h2 style="font-size:1.05rem">Projections &amp; Forecasting</h2><p>Based on current ~3% MoM growth &#183; assumes consistent cadence</p></div></div>
+    <div class="mkt-divider">30 / 60 / 90 Day Forecast Snapshot</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:22px" id="fcCols"></div>
+    <div class="mkt-row mkt-eq">
+      <div class="mkt-card"><h3>IG Follower Growth &mdash; 12-Month Forecast</h3><div class="mkt-sub">Dashed = projected &#183; with optimistic / conservative bands</div><div class="mkt-cw" style="height:260px"><canvas id="cProjIg"></canvas></div></div>
+      <div class="mkt-card"><h3>Reach &amp; Impressions &mdash; 6-Month Outlook</h3><div class="mkt-sub">At current trajectory</div><div class="mkt-cw" style="height:260px"><canvas id="cProjReach"></canvas></div></div>
+    </div>
+    <div class="mkt-divider">Scenario Planning &mdash; Posting Frequency Impact</div>
+    <div class="mkt-row mkt-col2">
+      <div class="mkt-card"><h3>Follower Growth: 3 Scenarios (Next 6 Months)</h3><div class="mkt-sub">By posting frequency</div><div class="mkt-cw" style="height:270px"><canvas id="cProjScen"></canvas></div></div>
+      <div class="mkt-card"><h3>Scenario Comparison at 6 Months</h3><div class="mkt-sub">Projected outcomes by commitment level</div>
+        <table class="mkt-table" style="margin-top:12px"><thead><tr><th>Scenario</th><th>Posts/Wk</th><th>Followers</th><th>Reach/mo</th><th>Leads/mo</th></tr></thead><tbody>
+          <tr><td><span class="mkt-badge mkt-warn">Minimal</span></td><td>3x</td><td>~14,900</td><td>~21.6K</td><td>~18</td></tr>
+          <tr><td><span class="mkt-badge mkt-up">Recommended</span></td><td>5x</td><td>~16,100</td><td>~25.8K</td><td>~26</td></tr>
+          <tr><td><span class="mkt-badge mkt-neutral">Growth mode</span></td><td>7x</td><td>~17,600</td><td>~30.5K</td><td>~34</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="mkt-divider">Facebook Follower Forecast &mdash; 3 Scenarios</div>
+    <div class="mkt-row mkt-col2">
+      <div class="mkt-card"><h3>Facebook Growth &mdash; 6-Month Projection</h3><div class="mkt-sub">Organic vs. cross-promo vs. + $200/mo boost</div><div class="mkt-cw" style="height:260px"><canvas id="cProjFb"></canvas></div></div>
+      <div class="mkt-card"><h3>Facebook Scenario Detail</h3><div class="mkt-sub">Month-by-month estimates</div>
+        <table class="mkt-table" style="margin-top:12px"><thead><tr><th>Month</th><th>Organic</th><th>Cross-Promo</th><th>+ Boost</th></tr></thead><tbody id="fbScenTable"></tbody></table>
+      </div>
+    </div>
+    <div class="mkt-divider">Milestone Tracker</div>
+    <div class="mkt-card" style="margin-bottom:22px">
+      <h3>When Will GLLUR Hit Key Milestones?</h3><div class="mkt-sub">At current ~3% MoM &#183; "with strategy" assumes activation now</div>
+      <table class="mkt-table" style="margin-top:12px">
+        <thead><tr><th>Milestone</th><th>Target</th><th>Current</th><th>Projected (3%)</th><th>With Strategy</th></tr></thead>
+        <tbody>
+          <tr><td class="mkt-ml">IG: 3K Followers</td><td>3,000</td><td>2,471</td><td>&mdash;</td><td><span class="mkt-badge mkt-neutral">Est.</span></td></tr>
+          <tr><td class="mkt-ml">IG: 5K Followers</td><td>5,000</td><td>2,471</td><td>&mdash;</td><td><span class="mkt-badge mkt-neutral">Est.</span></td></tr>
+          <tr><td class="mkt-ml">FB: 500 Followers</td><td>500</td><td>279</td><td>&mdash;</td><td><span class="mkt-badge mkt-neutral">Est.</span></td></tr>
+          <tr><td class="mkt-ml">Website: 5K visits/mo</td><td>5,000</td><td>~1,900</td><td>&mdash;</td><td><span class="mkt-badge mkt-up">After GA4 + blog</span></td></tr>
+          <tr><td class="mkt-ml">30 Leads/mo</td><td>30</td><td>~18</td><td>~12 months</td><td><span class="mkt-badge mkt-up">~6 months</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="mkt-divider">Lead Pipeline Forecast</div>
+    <div class="mkt-row mkt-col2">
+      <div class="mkt-card"><h3>Estimated Monthly Leads &mdash; 6-Month Forecast</h3><div class="mkt-sub">From reach growth, profile visits &amp; ~0.6% CVR</div><div class="mkt-cw" style="height:230px"><canvas id="cProjLeads"></canvas></div></div>
+      <div class="mkt-card"><h3>Lead-to-Revenue Estimate</h3><div class="mkt-sub">Assuming 25% close rate &#183; all figures estimated</div>
+        <table class="mkt-table" style="margin-top:12px"><thead><tr><th>Timeframe</th><th>Leads</th><th>Closed (25%)</th><th>Est. Revenue*</th></tr></thead><tbody>
+          <tr><td>This month</td><td>~18</td><td>~4-5</td><td>$20K-$60K</td></tr>
+          <tr><td>30 days</td><td>~19</td><td>~5</td><td>$25K-$65K</td></tr>
+          <tr><td>90 days</td><td>~22</td><td>~5-6</td><td>$30K-$80K</td></tr>
+          <tr><td>6 months (strategy)</td><td>~26</td><td>~6-7</td><td>$40K-$100K</td></tr>
+        </tbody></table>
+        <div style="margin-top:10px;font-size:.6rem;color:var(--text2);line-height:1.6">*Illustrative; connect GA4 + CRM for real conversion data.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRENDS & IDEAS -->
+  <div class="mkt-panel" id="mkt-trends">
+    <div class="mkt-head" style="margin-bottom:16px"><div><h2 style="font-size:1.05rem">Trends, Hashtags &amp; Content Strategy</h2><p>Sample content playbook</p></div></div>
+    <div class="mkt-card" style="margin-bottom:22px">
+      <h3>Trending Hashtags</h3><div class="mkt-sub">Growth vs. prior quarter &#183; sorted by momentum</div>
+      <div class="mkt-tags">
+        <div class="mkt-tag"><b>#FutureOfWork</b><span class="tg">52%</span></div>
+        <div class="mkt-tag"><b>#AItools2026</b><span class="tg">67%</span></div>
+        <div class="mkt-tag"><b>#ProductivityHacks</b><span class="tg">45%</span></div>
+        <div class="mkt-tag"><b>#BuildInPublic</b><span class="tg">38%</span></div>
+        <div class="mkt-tag"><b>#SaaS</b><span class="tg">33%</span></div>
+        <div class="mkt-tag"><b>#Automation</b><span class="tg">31%</span></div>
+        <div class="mkt-tag"><b>#StartupLife</b><span class="tg">24%</span></div>
+        <div class="mkt-tag"><b>#DataDriven</b><span class="tg">22%</span></div>
+        <div class="mkt-tag"><b>#TechTrends</b><span class="tg">18%</span></div>
+        <div class="mkt-tag"><b>#Innovation</b><span class="tg">12%</span></div>
+      </div>
+    </div>
+    <div class="mkt-sets">
+      <div class="mkt-set"><h4>Product Showcase &#183; Est. reach 20K-45K</h4><div class="mkt-settags">#SaaS #ProductLaunch #TechProduct #Software #Innovation #BuildInPublic #ProductDesign #UX #B2B #Startup</div><div class="mkt-setreach">Best for: launches, feature reveals, demos</div></div>
+      <div class="mkt-set"><h4>Trending Discovery &#183; Est. reach 30K-60K</h4><div class="mkt-settags">#AItools2026 #FutureOfWork #Automation #ProductivityHacks #TechTrends #DataDriven #DigitalTransformation #WorkSmarter</div><div class="mkt-setreach">Best for: Reels, trending content, broad reach</div></div>
+      <div class="mkt-set"><h4>Niche / Category &#183; Est. reach 10K-22K</h4><div class="mkt-settags">#RevOps #MarketingAnalytics #GrowthMarketing #SalesEnablement #CustomerSuccess #PLG #DemandGen</div><div class="mkt-setreach">Best for: targeted posts &#183; highest intent</div></div>
+    </div>
+    <div class="mkt-card" style="margin-bottom:22px">
+      <h3>Caption Templates That Drive Engagement</h3><div class="mkt-sub">Proven formats &#183; always end with a question or CTA</div>
+      <div class="mkt-caps">
+        <div class="mkt-cap"><div class="mkt-captype">Launch Reveal</div><div class="mkt-captext">"It's here. [Feature] is now live &mdash; and it changes how you [outcome]. What would you build with it first?"</div><div class="mkt-captip">Use with a demo Reel &#183; highest save rate</div></div>
+        <div class="mkt-cap"><div class="mkt-captype">Before / After</div><div class="mkt-captext">"From [before] to [after] in [timeframe]. Swipe to see how teams get there."</div><div class="mkt-captip">Carousel format &#183; drives saves</div></div>
+        <div class="mkt-cap"><div class="mkt-captype">Quick Tip</div><div class="mkt-captext">"Tip: [tip]. This one change can save your team hours every week. Would you try it?"</div><div class="mkt-captip">Educational = high saves</div></div>
+        <div class="mkt-cap"><div class="mkt-captype">Customer Story</div><div class="mkt-captext">"Our customer needed [vision]. Months later, [result]. Here's how."</div><div class="mkt-captip">Social proof &#183; pair with a quote</div></div>
+        <div class="mkt-cap"><div class="mkt-captype">Behind the Scenes</div><div class="mkt-captext">"A peek behind the build &mdash; from roadmap to release. Which part surprises you most?"</div><div class="mkt-captip">Great for Stories/Reels &#183; humanizes brand</div></div>
+        <div class="mkt-cap"><div class="mkt-captype">Trend Take</div><div class="mkt-captext">"[Trend] is everywhere in 2026 &mdash; here's our honest take, and how we use it. Save this!"</div><div class="mkt-captip">Save-worthy = algorithm boost</div></div>
+      </div>
+    </div>
+    <div class="mkt-card" style="margin-bottom:22px">
+      <h3>This Week's Content Calendar</h3><div class="mkt-sub">Optimal schedule based on engagement heatmap</div>
+      <div class="mkt-calgrid">
+        <div class="mkt-cal" style="border-left-color:#1a6bff"><div class="mkt-calday" style="color:#5b9bff">Monday</div><div class="mkt-caltype">Reel</div><div class="mkt-calidea">Feature spotlight in action</div><div class="mkt-calplat">IG + FB &#183; 11am</div></div>
+        <div class="mkt-cal" style="border-left-color:#00c6a2"><div class="mkt-calday" style="color:#00c6a2">Tuesday</div><div class="mkt-caltype">Carousel</div><div class="mkt-calidea">Before &amp; after workflow</div><div class="mkt-calplat">Instagram &#183; 12pm</div></div>
+        <div class="mkt-cal" style="border-left-color:#ff6b35"><div class="mkt-calday" style="color:#ff6b35">Wednesday</div><div class="mkt-caltype">Story Poll</div><div class="mkt-calidea">"Which feature next?" poll</div><div class="mkt-calplat">IG Stories &#183; 10am</div></div>
+        <div class="mkt-cal" style="border-left-color:#5b9bff"><div class="mkt-calday" style="color:#5b9bff">Thursday</div><div class="mkt-caltype">Blog + Teaser</div><div class="mkt-calidea">Trend article + post</div><div class="mkt-calplat">Web + All &#183; 11am</div></div>
+        <div class="mkt-cal" style="border-left-color:#00e676"><div class="mkt-calday" style="color:#00e676">Friday</div><div class="mkt-caltype">Photo</div><div class="mkt-calidea">Detail / UI shot</div><div class="mkt-calplat">IG + FB &#183; 1pm</div></div>
+        <div class="mkt-cal" style="border-left-color:#1a6bff"><div class="mkt-calday" style="color:#5b9bff">Saturday</div><div class="mkt-caltype">Reel</div><div class="mkt-calidea">Customer testimonial</div><div class="mkt-calplat">IG + FB &#183; 10am</div></div>
+        <div class="mkt-cal" style="border-left-color:#5f7fa0"><div class="mkt-calday" style="color:#5f7fa0">Sunday</div><div class="mkt-caltype">Engage</div><div class="mkt-calidea">Reply to comments &amp; DMs</div><div class="mkt-calplat">All platforms</div></div>
+      </div>
+    </div>
+    <div class="mkt-dark">
+      <h3>What's Trending &mdash; 2026</h3>
+      <div class="mkt-trgrid">
+        <div class="mkt-trc"><div class="mkt-trtop"><span class="mkt-trname">AI-Native Tools</span><span class="mkt-trg">+52%</span></div><div class="mkt-trd">Built-in AI assistants and automation as a default expectation</div></div>
+        <div class="mkt-trc"><div class="mkt-trtop"><span class="mkt-trname">Build in Public</span><span class="mkt-trg">+45%</span></div><div class="mkt-trd">Sharing roadmap, metrics, and process openly to build trust</div></div>
+        <div class="mkt-trc"><div class="mkt-trtop"><span class="mkt-trname">Short-Form Demos</span><span class="mkt-trg">+41%</span></div><div class="mkt-trd">30-60s product demos outperform long explainers</div></div>
+        <div class="mkt-trc"><div class="mkt-trtop"><span class="mkt-trname">Founder-Led Content</span><span class="mkt-trg">+38%</span></div><div class="mkt-trd">Personal, founder-voiced posts drive higher trust &amp; reach</div></div>
+        <div class="mkt-trc"><div class="mkt-trtop"><span class="mkt-trname">Community-First</span><span class="mkt-trg">+33%</span></div><div class="mkt-trd">Engaged communities over follower counts</div></div>
+        <div class="mkt-trc"><div class="mkt-trtop"><span class="mkt-trname">Data Storytelling</span><span class="mkt-trg">+29%</span></div><div class="mkt-trd">Turning metrics into shareable visual narratives</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI ASSISTANT -->
+  <div class="mkt-panel" id="mkt-ai">
+    <div class="mkt-head" style="margin-bottom:16px"><div><h2 style="font-size:1.05rem">AI Marketing Assistant</h2><p>Ask about analytics, strategy, hashtags, captions, forecasting</p></div></div>
+    <div class="mkt-ai">
+      <div class="mkt-chatbox">
+        <div class="mkt-chatmsgs" id="mktChat"><div class="mkt-msg mkt-msg-a">Hi! I'm your GLLUR Marketing AI. Ask me about your analytics, engagement rate, growth strategy, hashtags, content ideas, captions, or how to read any metric on this dashboard.</div></div>
+        <div class="mkt-chatbar"><input type="text" id="mktChatIn" placeholder="e.g. What's my biggest opportunity? What should I post this week?"/><button class="mkt-send" onclick="mktSend()">Send</button></div>
+      </div>
+      <div class="mkt-aiside">
+        <div class="mkt-qbox">
+          <h4>Quick Questions</h4>
+          <button class="mkt-qbtn" onclick="mktQ(this)">What are the best hashtags?</button>
+          <button class="mkt-qbtn" onclick="mktQ(this)">When should I post?</button>
+          <button class="mkt-qbtn" onclick="mktQ(this)">Give me content ideas</button>
+          <button class="mkt-qbtn" onclick="mktQ(this)">Write me a caption</button>
+          <button class="mkt-qbtn" onclick="mktQ(this)">How can I grow my followers?</button>
+          <button class="mkt-qbtn" onclick="mktQ(this)">What does engagement rate mean?</button>
+          <button class="mkt-qbtn" onclick="mktQ(this)">What is my biggest opportunity?</button>
+          <button class="mkt-qbtn" onclick="mktQ(this)">Show me my 90-day forecast</button>
+        </div>
+        <div class="mkt-capbox">
+          <h4>AI Capabilities</h4>
+          <ul><li>Metric explanations</li><li>Engagement analysis</li><li>Hashtag optimization</li><li>Caption writing</li><li>Content calendar planning</li><li>Growth strategy</li><li>Benchmarking</li><li>Trend forecasting</li></ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <strong>GLLUR Market Intelligence Dashboard</strong> &#183; Sample demonstration dashboard with illustrative data<br>
+  <em>Not financial advice. For demonstration purposes only.</em>
+</footer>
+
+<script>
+function updateClock(){const t=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'});document.getElementById('clock').textContent='Today · '+t;}
+setInterval(updateClock,1000); updateClock();
+
+Chart.defaults.color='#5f7fa0';
+Chart.defaults.borderColor='#162b4a';
+Chart.defaults.font.family="'Segoe UI',system-ui,sans-serif";
+const C={blue:'#1a6bff',teal:'#00c6a2',orange:'#ff6b35',green:'#00e676',red:'#ff3d3d',warn:'#f5c518',grey:'rgba(95,127,160,0.4)'};
+const M={navy:'#00c6a2',navy2:'#5b9bff',ig:'#1a6bff',purple:'#5b9bff',orange:'#ff6b35',green:'#00e676',grid:'rgba(22,43,74,0.6)',text:'#5f7fa0'};
+
+const charts={};
+const tabCharts={};
+
+function buildTab(tab){
+  if(tab==='marketing') buildMkt(currentMkt);
+}
+function showTab(id,el){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+  buildTab(id);
+}
+function enterDashboard(){
+  const s=document.getElementById('splash');
+  if(s){ s.classList.add('hide'); setTimeout(()=>{ s.style.display='none'; },600); }
+  buildMkt(currentMkt);
+}
+/* ═══ MARKETING SUB-DASHBOARD (dark blue, lazy per sub-tab) ═══ */
+const MM=['Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'];
+const baseFol=[2210,2250,2288,2322,2352,2380,2405,2426,2444,2458,2466,2471];
+const Lleg=c=>({legend:{labels:{color:M.text,boxWidth:11},position:c||'top'}});
+const Lsc=(opt={})=>Object.assign({y:{grid:{color:M.grid},ticks:{color:M.text}},x:{grid:{display:false},ticks:{color:M.text}}},opt);
+const mktBuilders={
+  cPostFormat:()=>new Chart(document.getElementById('cPostFormat'),{type:'bar',data:{labels:['Sep 13','Sep 19','Sep 19','Sep 12','Aug 29'],datasets:[{label:'Views',data:[4900,723,681,429,345],backgroundColor:[M.ig,M.purple,M.purple,M.navy,M.orange],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:M.grid},ticks:{color:M.text}},y:{grid:{display:false},ticks:{color:M.text}}}}}),
+  cPostDay:()=>new Chart(document.getElementById('cPostDay'),{data:{labels:['Sep 13','Sep 19','Aug 29','Sep 5','Sep 11'],datasets:[{label:'Interactions',data:[153,5,5,4,2],backgroundColor:'rgba(0,198,162,.7)',borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{grid:{color:M.grid},ticks:{color:M.text}},x:{grid:{display:false},ticks:{color:M.text}}}}}),
+  cMkHealth:()=>new Chart(document.getElementById('cMkHealth'),{type:'radar',data:{labels:['Engagement','Reach','Growth','Saves','Consistency','Video'],datasets:[{label:'GLLUR',data:[84,72,70,86,62,45],borderColor:M.ig,backgroundColor:'rgba(26,107,255,.15)',borderWidth:2.5,pointRadius:4},{label:'Industry Avg',data:[60,60,60,60,60,60],borderColor:M.navy,backgroundColor:'rgba(0,198,162,.06)',borderWidth:1.5,pointRadius:0,borderDash:[4,4]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:M.text,boxWidth:11}}},scales:{r:{min:0,max:100,grid:{color:M.grid},angleLines:{color:M.grid},ticks:{display:false},pointLabels:{color:'#c8d6e8',font:{size:10,weight:'600'}}}}}}),
+  cMkGrowth:()=>new Chart(document.getElementById('cMkGrowth'),{type:'line',data:{labels:MM,datasets:[{label:'Actual',data:baseFol,borderColor:M.ig,backgroundColor:'rgba(26,107,255,.08)',fill:true,tension:.3,borderWidth:2.5,pointRadius:3},{label:'Projected',data:baseFol.map((v,i)=>i>=10?Math.round(baseFol[10]*Math.pow(1.018,i-10)):null),borderColor:M.ig,borderDash:[5,4],fill:false,tension:.3,borderWidth:2,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:Lleg(),scales:Lsc()}}),
+  cMkReach:()=>new Chart(document.getElementById('cMkReach'),{type:'bar',data:{labels:MM,datasets:[{label:'Impressions',data:[34000,35800,37500,39000,40500,41800,43000,44100,45000,45800,46400,47000],backgroundColor:'rgba(0,198,162,.25)',borderRadius:4},{label:'Reach',data:[12500,13200,13900,14600,15200,15800,16300,16800,17200,17600,17900,18200],backgroundColor:'rgba(26,107,255,.65)',borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:Lleg(),scales:Lsc()}}),
+  cMkContent:()=>new Chart(document.getElementById('cMkContent'),{type:'bar',data:{labels:['Stories','Posts'],datasets:[{label:'% of Views',data:[70.7,29.4],backgroundColor:[M.ig,M.purple],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{max:100,grid:{color:M.grid},ticks:{color:M.text,callback:v=>v+'%'}},y:{grid:{display:false},ticks:{color:M.text}}}}}),
+  cMkEng:()=>new Chart(document.getElementById('cMkEng'),{type:'doughnut',data:{labels:['Posts','Stories'],datasets:[{data:[88.2,11.8],backgroundColor:[M.ig,M.purple],borderColor:'#0b1627',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'right',labels:{color:M.text,boxWidth:11}}}}}),
+  cIgReach:()=>{const r=[12500,13200,13900,14600,15200,15800,16300,16800,17200,17600,17900,18200];return new Chart(document.getElementById('cIgReach'),{type:'line',data:{labels:MM,datasets:[{label:'Impressions',data:r.map(v=>Math.round(v*2.58)),borderColor:M.purple,backgroundColor:'rgba(91,155,255,.08)',fill:true,tension:.3,borderWidth:2.5,pointRadius:3},{label:'Reach',data:r,borderColor:M.ig,backgroundColor:'rgba(26,107,255,.06)',fill:true,tension:.3,borderWidth:2.5,pointRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:Lleg(),scales:Lsc()}});},
+  cIgEng:()=>new Chart(document.getElementById('cIgEng'),{type:'doughnut',data:{labels:['Likes','Saves','Comments','Shares'],datasets:[{data:[59,27,7,7],backgroundColor:[M.ig,M.purple,M.orange,M.navy],borderColor:'#0b1627',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,cutout:'58%',plugins:{legend:{position:'right',labels:{color:M.text,boxWidth:11}}}}}),
+  cIgGrowth:()=>new Chart(document.getElementById('cIgGrowth'),{type:'line',data:{labels:[...MM,'Jun','Jul','Aug','Sep','Oct','Nov'],datasets:[{label:'Actual',data:[...baseFol,...Array(6).fill(null)],borderColor:M.ig,backgroundColor:'rgba(26,107,255,.08)',fill:true,tension:.3,borderWidth:2.5,pointRadius:3},{label:'Projected',data:[...baseFol.slice(0,-1).map(()=>null),baseFol[11],...Array.from({length:6},(_,i)=>Math.round(baseFol[11]*Math.pow(1.022,i+1)))],borderColor:M.ig,borderDash:[5,4],fill:false,tension:.3,borderWidth:2,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:Lleg(),scales:Lsc()}}),
+  cIgContent:()=>new Chart(document.getElementById('cIgContent'),{type:'bar',data:{labels:['Reels','Carousels','Single Photo','Stories'],datasets:[{label:'Avg ER %',data:[4.9,4.1,3.3,2.8],backgroundColor:[M.ig,M.purple,M.orange,M.navy],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{max:7,grid:{color:M.grid},ticks:{color:M.text,callback:v=>v+'%'}},y:{grid:{display:false},ticks:{color:M.text}}}}}),
+  cIgStoryViews:()=>new Chart(document.getElementById('cIgStoryViews'),{type:'line',data:{labels:['Week 1','Week 2','Week 3','Week 4'],datasets:[{label:'Avg Views/Slide',data:[2300,2520,2460,2680],borderColor:M.ig,backgroundColor:'rgba(26,107,255,.08)',fill:true,tension:.4,borderWidth:2.5,pointRadius:5,pointBackgroundColor:M.ig}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:2000,max:2900,grid:{color:M.grid},ticks:{color:M.text}},x:{grid:{display:false},ticks:{color:M.text}}}}}),
+  cIgStoryType:()=>new Chart(document.getElementById('cIgStoryType'),{type:'bar',data:{labels:['Poll/Quiz','Question','Peek','BTS','Link','Reshare'],datasets:[{label:'Avg Views',data:[2700,2400,2600,2300,2100,1400],backgroundColor:'rgba(26,107,255,.7)',borderRadius:5,yAxisID:'y'},{label:'Completion %',data:[81,77,74,70,62,55],backgroundColor:'rgba(0,198,162,.55)',borderRadius:5,yAxisID:'y2'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:M.text,font:{size:10}}}},scales:{y:{position:'left',grid:{color:M.grid},ticks:{color:M.text}},y2:{position:'right',min:0,max:100,grid:{display:false},ticks:{color:M.text,callback:v=>v+'%'}},x:{grid:{display:false},ticks:{color:M.text,font:{size:9}}}}}}),
+  cFbGrowth:()=>new Chart(document.getElementById('cFbGrowth'),{type:'line',data:{labels:['Now','Mo 1','Mo 2','Mo 3','Mo 4','Mo 5','Mo 6'],datasets:[{label:'Without strategy',data:[640,652,664,676,689,702,715],borderColor:'#5f7fa0',borderDash:[4,4],fill:false,tension:.3,borderWidth:1.5,pointRadius:3},{label:'With cross-promotion',data:[640,760,910,1080,1240,1380,1500],borderColor:M.ig,backgroundColor:'rgba(26,107,255,.08)',fill:true,tension:.3,borderWidth:2.5,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:Lleg(),scales:Lsc({y:{beginAtZero:false,grid:{color:M.grid},ticks:{color:M.text}}})}}),
+  cFbPie:()=>new Chart(document.getElementById('cFbPie'),{type:'doughnut',data:{labels:['Photos','Videos','Links','Text'],datasets:[{data:[40,25,20,15],backgroundColor:['#1a6bff','#00e676','#ff6b35','#5b9bff'],borderColor:'#0b1627',borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,cutout:'55%',plugins:{legend:{position:'right',labels:{color:M.text,boxWidth:11}}}}}),
+  cBenchRadar:()=>new Chart(document.getElementById('cBenchRadar'),{type:'radar',data:{labels:['Engagement','Save Rate','Story Compl.','Follower Growth','Video','Post Freq.','FB Presence'],datasets:[{label:'GLLUR',data:[82,86,74,62,45,55,30],borderColor:M.ig,backgroundColor:'rgba(26,107,255,.15)',borderWidth:2.5,pointRadius:4},{label:'Industry (100=avg)',data:[60,60,60,60,60,60,60],borderColor:M.navy,backgroundColor:'rgba(0,198,162,.05)',borderWidth:1.5,borderDash:[4,4],pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:M.text,boxWidth:11}}},scales:{r:{min:0,max:100,grid:{color:M.grid},angleLines:{color:M.grid},ticks:{display:false},pointLabels:{color:'#c8d6e8',font:{size:9.5,weight:'600'}}}}}}),
+  cProjIg:()=>{const proj=Array.from({length:12},(_,i)=>Math.round(baseFol[11]*Math.pow(1.03,i+1)));const labels=[...MM,'Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May'];return new Chart(document.getElementById('cProjIg'),{type:'line',data:{labels,datasets:[{label:'Actual',data:[...baseFol,...Array(12).fill(null)],borderColor:M.ig,backgroundColor:'rgba(26,107,255,.08)',fill:true,tension:.3,borderWidth:2.5,pointRadius:2},{label:'Projected',data:[...baseFol.slice(0,-1).map(()=>null),baseFol[11],...proj],borderColor:M.ig,borderDash:[5,4],fill:false,tension:.3,borderWidth:2,pointRadius:0},{label:'Optimistic +8%',data:[...Array(12).fill(null),baseFol[11],...proj.map(v=>Math.round(v*1.08))],borderColor:'rgba(0,230,118,.5)',borderDash:[3,3],fill:false,tension:.3,borderWidth:1.5,pointRadius:0},{label:'Conservative -6%',data:[...Array(12).fill(null),baseFol[11],...proj.map(v=>Math.round(v*0.94))],borderColor:'rgba(255,61,61,.4)',borderDash:[3,3],fill:false,tension:.3,borderWidth:1.5,pointRadius:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:M.text,font:{size:9}}}},scales:{y:{grid:{color:M.grid},ticks:{color:M.text}},x:{grid:{display:false},ticks:{color:M.text,maxRotation:45,font:{size:8}}}}}});},
+  cProjReach:()=>{const fr=[19000,19600,20200,20800,21400,22000];return new Chart(document.getElementById('cProjReach'),{type:'bar',data:{labels:['Jun','Jul','Aug','Sep','Oct','Nov'],datasets:[{label:'Est. Impressions',data:fr.map(v=>Math.round(v*2.58)),backgroundColor:'rgba(0,198,162,.25)',borderRadius:5},{label:'Est. Reach',data:fr,backgroundColor:'rgba(26,107,255,.7)',borderRadius:5}]},options:{responsive:true,maintainAspectRatio:false,plugins:Lleg(),scales:Lsc()}});},
+  cProjScen:()=>new Chart(document.getElementById('cProjScen'),{type:'line',data:{labels:['Now','Mo 1','Mo 2','Mo 3','Mo 4','Mo 5','Mo 6'],datasets:[{label:'3x/wk (current)',data:[2471,2520,2570,2621,2673,2726,2780],borderColor:'#5f7fa0',borderDash:[4,3],fill:false,tension:.3,borderWidth:2,pointRadius:3},{label:'5x/wk (recommended)',data:[2471,2560,2655,2754,2856,2962,3072],borderColor:M.ig,backgroundColor:'rgba(26,107,255,.07)',fill:true,tension:.3,borderWidth:2.5,pointRadius:4},{label:'7x/wk (growth)',data:[2471,2610,2758,2914,3079,3253,3437],borderColor:M.green,backgroundColor:'rgba(0,230,118,.06)',fill:true,tension:.3,borderWidth:2.5,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:M.text,font:{size:10}}}},scales:{y:{grid:{color:M.grid},ticks:{color:M.text,callback:v=>v.toLocaleString()}},x:{grid:{display:false},ticks:{color:M.text}}}}}),
+  cProjFb:()=>new Chart(document.getElementById('cProjFb'),{type:'line',data:{labels:['Now','Mo 1','Mo 2','Mo 3','Mo 4','Mo 5','Mo 6'],datasets:[{label:'Organic',data:[640,652,664,676,689,702,715],borderColor:'#5f7fa0',borderDash:[4,3],fill:false,tension:.3,borderWidth:1.5,pointRadius:3},{label:'Cross-promote',data:[640,760,910,1080,1240,1380,1500],borderColor:M.ig,backgroundColor:'rgba(26,107,255,.07)',fill:true,tension:.3,borderWidth:2.5,pointRadius:4},{label:'+ $200/mo boost',data:[640,880,1180,1500,1820,2150,2480],borderColor:M.green,backgroundColor:'rgba(0,230,118,.06)',fill:true,tension:.3,borderWidth:2.5,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:M.text,font:{size:10}}}},scales:Lsc({y:{beginAtZero:false,grid:{color:M.grid},ticks:{color:M.text}}})}}),
+  cProjLeads:()=>new Chart(document.getElementById('cProjLeads'),{type:'line',data:{labels:['Now','Mo 1','Mo 2','Mo 3','Mo 4','Mo 5','Mo 6'],datasets:[{label:'At current pace',data:[18,18,19,20,20,21,22],borderColor:'#5f7fa0',borderDash:[4,3],fill:false,tension:.3,borderWidth:2,pointRadius:4},{label:'With active strategy',data:[18,19,21,22,24,25,26],borderColor:M.green,backgroundColor:'rgba(0,230,118,.08)',fill:true,tension:.3,borderWidth:2.5,pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'top',labels:{color:M.text,font:{size:10}}}},scales:{y:{beginAtZero:true,max:30,grid:{color:M.grid},ticks:{color:M.text,callback:v=>v+' leads'}},x:{grid:{display:false},ticks:{color:M.text}}}}})
+};
+const mktTabCharts={overview:['cMkHealth','cMkGrowth','cMkReach','cMkContent','cMkEng'],posts:['cPostFormat','cPostDay'],instagram:['cIgReach','cIgEng','cIgGrowth','cIgContent','cIgStoryViews','cIgStoryType'],facebook:['cFbGrowth','cFbPie'],benchmarks:['cBenchRadar'],projections:['cProjIg','cProjReach','cProjScen','cProjFb','cProjLeads'],trends:[],ai:[]};
+function buildMktFunnel(){
+  const f=[{l:'Impressions',v:47000,c:'#5b9bff'},{l:'Reach (Unique)',v:18200,c:'#1a6bff'},{l:'Profile Visits',v:2940,c:'#00c6a2'},{l:'Link Clicks',v:430,c:'#1e7fd4'},{l:'Est. Leads',v:18,c:'#00e676'}];
+  const fw=document.getElementById('mktFunnel'),mx=f[0].v;
+  f.forEach((x,i)=>{const r=document.createElement('div');r.className='mkt-frow';r.innerHTML=`<div class="mkt-flabel">${x.l}</div><div class="mkt-fbw"><div class="mkt-fbar" style="width:${Math.max(x.v/mx*100,8)}%;background:${x.c}">${x.v.toLocaleString()}</div></div><div class="mkt-fpct">${i===0?'100%':(x.v/mx*100).toFixed(1)+'%'}</div>`;fw.appendChild(r);});
+}
+function buildIgEngList(){
+  const d=[{l:'Likes',v:'4,250',p:59,c:'#1a6bff'},{l:'Saves',v:'1,940',p:27,c:'#5b9bff'},{l:'Comments',v:'500',p:7,c:'#ff6b35'},{l:'Shares',v:'500',p:7,c:'#00c6a2'}];
+  const el=document.getElementById('igEngList');
+  d.forEach(x=>{const row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:8px;font-size:.7rem';row.innerHTML=`<div style="width:10px;height:10px;border-radius:3px;background:${x.c};flex-shrink:0"></div><span style="flex:1;color:#5f7fa0">${x.l}</span><span style="font-weight:700;color:#e6edf5">${x.v}</span><span style="color:#5f7fa0">${x.p}%</span>`;el.appendChild(row);const pb=document.createElement('div');pb.className='mkt-prog';pb.innerHTML=`<div class="mkt-progfill" style="width:${x.p}%;background:${x.c}"></div>`;el.appendChild(pb);});
+}
+function buildIgHeatmap(){
+  const el=document.getElementById('igHeatmap'); if(!el) return; el.innerHTML='';
+  const hours=['12a','3a','6a','9a','12p','3p','6p','9p'];
+  const vals=[158,656,1225,1361,1382,1441,1262,361];
+  const max=Math.max(...vals);
+  const wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;align-items:flex-end;gap:10px;height:160px;padding:10px 4px 4px;';
+  hours.forEach((h,i)=>{
+    const pct=Math.max(4,Math.round(vals[i]/max*100)), peak=vals[i]===max;
+    const col=document.createElement('div');
+    col.style.cssText='flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;';
+    col.innerHTML='<div style="font-size:.62rem;color:'+(peak?'#00c6a2':'#7f9dc4')+';font-weight:700">'+vals[i].toLocaleString()+'</div>'
+      +'<div title="'+h+'" style="width:100%;height:'+pct+'%;border-radius:6px 6px 0 0;background:'+(peak?'#00c6a2':'rgba(26,107,255,.5)')+'"></div>'
+      +'<div style="font-size:.6rem;color:#5f7fa0">'+h+'</div>';
+    wrap.appendChild(col);
+  });
+  el.appendChild(wrap);
+  const cap=document.createElement('div');
+  cap.style.cssText='font-size:.68rem;color:#7fe9d0;margin-top:8px;';
+  cap.textContent='Peak audience activity: 3pm (also strong 9am–12pm). Quietest: overnight.';
+  el.appendChild(cap);
+}
+function buildForecastCols(){
+  const data=[
+    {p:'30 Days',d:'+1 month',m:[['IG Followers','~12,860','+380'],['Monthly Reach','~19.4K','+1.2K'],['Engagement','~3.4%','stable'],['FB Followers','~760','+120 (strategy)'],['Est. Leads','~19','growing']]},
+    {p:'60 Days',d:'+2 months',m:[['IG Followers','~13,250','+770'],['Monthly Reach','~20.8K','+2.6K'],['Engagement','~3.5%','+0.1pp'],['FB Followers','~1,080','+440'],['Est. Leads','~21','growing']]},
+    {p:'90 Days',d:'+3 months',m:[['IG Followers','~13,650','+1,170'],['Monthly Reach','~22.0K','+3.8K'],['Engagement','~3.5%','+0.1pp'],['FB Followers','~1,500','+860'],['Est. Leads','~22','growing']]}
+  ];
+  const fc=document.getElementById('fcCols');const col=['#5b9bff','#1a6bff','#00e676'];const bg=['rgba(91,155,255,.06)','rgba(26,107,255,.06)','rgba(0,230,118,.05)'];
+  data.forEach((c,ci)=>{const card=document.createElement('div');card.style.cssText=`background:var(--card);border-radius:14px;border:1px solid var(--border);border-top:3px solid ${col[ci]};overflow:hidden`;card.innerHTML=`<div style="padding:14px 18px 10px;background:${bg[ci]};border-bottom:1px solid var(--border)"><div style="font-size:1rem;font-weight:800;color:${col[ci]}">${c.p}</div><div style="font-size:.66rem;color:#5f7fa0">${c.d} &#183; projected</div></div>`+c.m.map(m=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid var(--border)"><div style="flex:1"><div style="font-size:.66rem;color:#5f7fa0">${m[0]}</div><div style="font-size:.82rem;font-weight:800;color:#e6edf5">${m[1]}</div></div><div style="font-size:.6rem;font-weight:600;color:#00e676;text-align:right">${m[2]}</div></div>`).join('');fc.appendChild(card);});
+}
+function buildFbScenTable(){
+  const mo=['Now','Mo 1','Mo 2','Mo 3','Mo 4','Mo 5','Mo 6'],org=[640,652,664,676,689,702,715],cr=[640,760,910,1080,1240,1380,1500],pd=[640,880,1180,1500,1820,2150,2480];
+  const tb=document.getElementById('fbScenTable');
+  mo.forEach((m,i)=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${m}</td><td>${org[i]}</td><td style="color:#5b9bff;font-weight:700">${cr[i]}</td><td style="color:#00e676;font-weight:700">${pd[i]}</td>`;tb.appendChild(tr);});
+}
+const mktExtraBuilders={overview:buildMktFunnel,posts:buildIgHeatmap,instagram:buildIgEngList,projections:()=>{buildForecastCols();buildFbScenTable();}};
+const mktCharts={},mktExtrasDone={};
+function buildMkt(sub){
+  (mktTabCharts[sub]||[]).forEach(id=>{ if(mktCharts[id]) mktCharts[id].resize(); else if(mktBuilders[id]) mktCharts[id]=mktBuilders[id](); });
+  if(mktExtraBuilders[sub] && !mktExtrasDone[sub]){ mktExtraBuilders[sub](); mktExtrasDone[sub]=true; }
+}
+let currentMkt='overview';
+function mktTab(sub,el){
+  document.querySelectorAll('#tab-marketing .mkt-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#tab-marketing .mkt-subbtn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('mkt-'+sub).classList.add('active');
+  el.classList.add('active');
+  currentMkt=sub;
+  buildMkt(sub);
+}
+const RESP={
+  time:"Optimal posting times based on your real audience activity:\n\n- Best: afternoons, peak ~3pm (1,441 active)\n- Also strong: 9am-12pm\n- Avoid: overnight/early morning before 6am (activity bottoms out ~158 at midnight)\n\nYour audience skews toward midday-to-afternoon, so schedule key posts between 9am and 3pm.",
+  hashtag:"Recommended hashtag strategy:\n\nHigh-reach (3-4): #SaaS #TechProduct #Innovation #FutureOfWork\nNiche/category (4-5): #RevOps #GrowthMarketing #DemandGen #PLG #DataDriven\nTrending now: #AItools2026 #BuildInPublic #Automation\n\nNiche tags convert better (~62% discovery) than broad tags (~28-35%).",
+  caption:"High-performing caption frameworks:\n\nLaunch Reveal: 'It's here. [Feature] is live - and it changes how you [outcome]. What would you build first?'\nQuick Tip: 'Tip: [tip]. Saves your team hours every week. Would you try it?'\n\nFormula: Hook + Story + Question/CTA. Always end with a question - it can lift comments 30-50%.",
+  er:"Engagement Rate measures how actively your audience interacts.\n\nER = (Likes + Comments + Saves + Shares) / Reach x 100\n\nYour ER: 3.4% - Industry avg: 2.8% - Top quartile: 4.5%+\n\nSaves are 27% of interactions (high). To lift ER: post more Reels (4.9% vs 3.3% for photos) and ask questions in captions.",
+  opportunity:"Your #1 opportunity is Facebook.\n\n- 2,471 on Instagram vs only 279 on Facebook\n- Peers average 1,500-3,000 FB followers\n- Quick wins: cross-promote in Stories, invite contacts, upload native video\n\nWith consistent effort you can reach ~1,500 FB followers in 90 days at ~$0 cost.",
+  grow:"INSTAGRAM (2.5K to ~3K in 90 days):\n- Post 5x/week (3 feed + 2 Reels)\n- Use location tags + engage daily\n\nFACEBOOK (279 to ~600 in 90 days):\n- Cross-promote from IG, native uploads only, join relevant groups\n\nGrowing Facebook is your highest-ROI move right now.",
+  content:"10 content ideas:\n1. Before/after Reel with voiceover (~4.9% ER)\n2. '5 mistakes teams make' carousel\n3. Customer reveal + quote\n4. 'What good looks like' comparison\n5. Monthly tips carousel\n6. Honest 'what we'd do differently'\n7. Poll: this vs that\n8. Behind-the-build Story series\n9. Use-case spotlight\n10. Data-storytelling post\n\nStart with #1, #3, #5.",
+  forecast:"Forecast at current ~3% MoM:\n\n30 days: ~12,860 IG - ~19.4K reach - ~19 leads - FB ~760\n60 days: ~13,250 IG - ~20.8K reach - ~21 leads - FB ~1,080\n90 days: ~13,650 IG - ~22.0K reach - ~22 leads - FB ~1,500\n\nMilestones: 15K (Sep-Nov 2026), 20K (mid-2027). See the Projections tab.",
+  fallback:"I can help with:\n- Metrics: ER, reach, impressions, saves, growth\n- Strategy: posting times, calendar, frequency\n- Hashtags, captions, content ideas\n- Growth (IG + FB), benchmarks, forecasting\n\nTry: 'What is my engagement rate?' or 'What's my biggest opportunity?'"
+};
+function getResp(q){q=q.toLowerCase();if(/forecast|project|predict|future|30 day|60 day|90 day|milestone|when will|how long/.test(q))return RESP.forecast;if(/time|when|schedule|hour|post at/.test(q))return RESP.time;if(/hashtag|#/.test(q))return RESP.hashtag;if(/caption|write|copy/.test(q))return RESP.caption;if(/engagement rate|what is er|er mean|er drop/.test(q))return RESP.er;if(/opportunit|biggest|focus|priority/.test(q))return RESP.opportunity;if(/grow|follower|increase|more follow/.test(q))return RESP.grow;if(/content|idea|post|suggest|what to/.test(q))return RESP.content;return RESP.fallback;}
+function addMktMsg(t,cls){const b=document.getElementById('mktChat'),d=document.createElement('div');d.className='mkt-msg '+cls;d.textContent=t;b.appendChild(d);b.scrollTop=b.scrollHeight;}
+function mktSend(){const inp=document.getElementById('mktChatIn'),t=inp.value.trim();if(!t)return;addMktMsg(t,'mkt-msg-u');inp.value='';const b=document.getElementById('mktChat'),ty=document.createElement('div');ty.className='mkt-typing';ty.id='mktTyp';ty.innerHTML='<div class="mkt-tdot"></div><div class="mkt-tdot"></div><div class="mkt-tdot"></div>';b.appendChild(ty);b.scrollTop=b.scrollHeight;setTimeout(()=>{ty.remove();addMktMsg(getResp(t),'mkt-msg-a');},800+Math.random()*600);}
+function mktQ(btn){document.getElementById('mktChatIn').value=btn.textContent.trim();mktSend();}
+document.addEventListener('keydown',e=>{const inp=document.getElementById('mktChatIn');if(inp&&document.activeElement===inp&&e.key==='Enter')mktSend();});
+window.addEventListener('load',()=>{ buildTab('marketing'); });
+
+/* ════════ SPACE GATE — warp through space straight into the dashboard ════════ */
+(function spaceGate(){
+  const gate=document.getElementById('gate');
+  if(!gate){document.body.classList.remove('gated');return;}
+  const enter=document.getElementById('gateEnter');
+  const label=document.getElementById('gateLabel');
+  const hint=document.getElementById('gateHint');
+
+  /* ---- warp starfield canvas ---- */
+  const cv=document.getElementById('warp'), ctx=cv.getContext('2d');
+  const dpr=Math.min(devicePixelRatio||1,2);
+  let W,H,cx,cy,stars=[];
+  const N=window.innerWidth<700?420:780;
+  const palette=['#ffffff','#cfe3ff','#9cc6ff','#5b9bff','#1a6bff','#00c6a2'];
+  function resize(){
+    W=cv.width=Math.floor(innerWidth*dpr); H=cv.height=Math.floor(innerHeight*dpr);
+    cv.style.width=innerWidth+'px'; cv.style.height=innerHeight+'px'; cx=W/2; cy=H/2;
+  }
+  resize(); addEventListener('resize',resize,{passive:true});
+  for(let i=0;i<N;i++){stars.push({x:(Math.random()-.5)*W,y:(Math.random()-.5)*H,z:Math.random()*W,pz:0,c:palette[(Math.random()*palette.length)|0]});}
+  let speed=0.9,target=0.9,warping=false,running=true;
+  function draw(){
+    if(!running)return;
+    ctx.fillStyle=warping?'rgba(2,4,10,0.22)':'rgba(2,4,10,0.55)';
+    ctx.fillRect(0,0,W,H);
+    speed+=(target-speed)*0.05;
+    for(const s of stars){
+      s.pz=s.z; s.z-=speed*(warping?26:6);
+      if(s.z<1){s.x=(Math.random()-.5)*W;s.y=(Math.random()-.5)*H;s.z=W;s.pz=s.z;}
+      const k=140*dpr/s.z, px=cx+s.x*k, py=cy+s.y*k;
+      const k0=140*dpr/s.pz, ox=cx+s.x*k0, oy=cy+s.y*k0;
+      const r=Math.max(.4,(1-s.z/W)*2.6*dpr);
+      ctx.strokeStyle=s.c; ctx.lineWidth=r;
+      ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(px,py); ctx.stroke();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+
+  /* ---- brief init, then unlock the gateway ---- */
+  const phrases=['Calibrating starfield','Syncing market feeds','Spinning up the core','Aligning the gateway'];
+  let pi=0; const hi=setInterval(()=>{pi=(pi+1)%phrases.length; if(hint)hint.textContent=phrases[pi];},650);
+  setTimeout(()=>{
+    clearInterval(hi);
+    if(enter)enter.disabled=false;
+    if(label)label.textContent='Enter Dashboard';
+    if(hint)hint.textContent='Click to engage warp';
+  },1700);
+
+  /* ---- launch: warp straight through space into the dashboard ---- */
+  let launched=false;
+  function launch(){
+    if(launched||(enter&&enter.disabled))return; launched=true;
+    if(enter)enter.disabled=true;
+    gate.classList.add('go');
+    target=3.0;
+    setTimeout(()=>{gate.classList.add('warp');warping=true;target=9;},150);
+    setTimeout(()=>{target=17;},650);
+    setTimeout(()=>{gate.classList.add('flash');target=24;},1080);
+    setTimeout(()=>{ enterDashboard(); },1180);
+    setTimeout(()=>{gate.classList.add('gone');document.body.classList.remove('gated');},1320);
+    setTimeout(()=>{running=false;gate.remove();},2400);
+  }
+  if(enter)enter.addEventListener('click',launch);
+  window.addEventListener('keydown',function gk(e){ if(e.key==='Enter' && !launched){ launch(); } });
+})();
+
+/* ════════ SUBTLE GALAXY BACKDROP behind the dashboard ════════ */
+(function spaceBg(){
+  const cv=document.getElementById('space-bg'); if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const dpr=Math.min(devicePixelRatio||1,2);
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  let W,H,stars=[],shoot=null,running=true,t=0;
+  const palette=['rgba(255,255,255,','rgba(180,210,255,','rgba(120,200,255,','rgba(0,198,162,'];
+  function resize(){
+    W=cv.width=Math.floor(innerWidth*dpr); H=cv.height=Math.floor(innerHeight*dpr);
+    cv.style.width=innerWidth+'px'; cv.style.height=innerHeight+'px';
+    const count=Math.min(260,Math.round((innerWidth*innerHeight)/9000));
+    stars=[];
+    for(let i=0;i<count;i++){
+      stars.push({x:Math.random()*W,y:Math.random()*H,r:(Math.random()*1.3+.3)*dpr,
+        c:palette[(Math.random()*palette.length)|0],
+        tw:Math.random()*Math.PI*2,sp:0.4+Math.random()*1.2,base:0.22+Math.random()*0.45});
+    }
+  }
+  resize(); addEventListener('resize',resize,{passive:true});
+  function draw(){
+    if(!running)return;
+    t+=0.016;
+    ctx.clearRect(0,0,W,H);
+    for(const s of stars){
+      const a=reduce?s.base:s.base+Math.sin(t*s.sp+s.tw)*0.22;
+      ctx.beginPath();
+      ctx.fillStyle=s.c+Math.max(0,a).toFixed(3)+')';
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fill();
+    }
+    if(!reduce){
+      if(!shoot && Math.random()<0.0035){
+        shoot={x:Math.random()*W*0.6,y:Math.random()*H*0.4,vx:(6+Math.random()*4)*dpr,vy:(2+Math.random()*2)*dpr,life:1};
+      }
+      if(shoot){
+        shoot.x+=shoot.vx; shoot.y+=shoot.vy; shoot.life-=0.02;
+        const g=ctx.createLinearGradient(shoot.x,shoot.y,shoot.x-shoot.vx*8,shoot.y-shoot.vy*8);
+        g.addColorStop(0,'rgba(160,210,255,'+Math.max(0,shoot.life)*0.9+')');
+        g.addColorStop(1,'rgba(160,210,255,0)');
+        ctx.strokeStyle=g; ctx.lineWidth=1.6*dpr;
+        ctx.beginPath(); ctx.moveTo(shoot.x,shoot.y); ctx.lineTo(shoot.x-shoot.vx*8,shoot.y-shoot.vy*8); ctx.stroke();
+        if(shoot.life<=0||shoot.x>W||shoot.y>H) shoot=null;
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+  document.addEventListener('visibilitychange',()=>{running=!document.hidden; if(running)draw();});
+})();
+</script>
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   GLLUR live-data layer
+   Reads the JSON the Python puller writes and hydrates the Instagram-sourced
+   KPIs. Everything is fail-soft: if there's no data file, the dashboard just
+   stays on its built-in sample numbers. No account is hardcoded — point it at
+   any client by ig_user_id.
+   ═══════════════════════════════════════════════════════════════════════════ */
+(function(){
+  const GLLUR = { brand:'GLLUR', account:'17841415506772123', dataBase:'./data', refreshMs:60000 };
+  // URL overrides so you can test without editing the file:  ?account=IG_USER_ID&data=./data
+  const qs = new URLSearchParams(location.search);
+  if(qs.get('account')) GLLUR.account = qs.get('account');
+  if(qs.get('data'))    GLLUR.dataBase = qs.get('data');
+
+  const DAYS=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const fmtInt = n => (n==null?'—':Number(n).toLocaleString('en-US'));
+  const fmtK   = n => { if(n==null) return '—'; n=Number(n); return n>=1000?(n/1000).toFixed(1)+'K':String(Math.round(n)); };
+  const pct    = n => (n==null?'—':Number(n).toFixed(1)+'%');
+  const avg    = a => a.length ? a.reduce((x,y)=>x+y,0)/a.length : null;
+
+  // Derive best / worst posting windows from post timestamps weighted by ER.
+  function bestTimes(media){
+    const buckets={};
+    media.forEach(m=>{
+      if(!m.timestamp || m.engagement_rate==null) return;
+      const d=new Date(m.timestamp), key=d.getDay()+'|'+d.getHours();
+      (buckets[key]=buckets[key]||[]).push(m.engagement_rate);
+    });
+    let best=null, worst=null;
+    Object.entries(buckets).forEach(([k,arr])=>{
+      const a=avg(arr), [day,hr]=k.split('|').map(Number);
+      const label=DAYS[day]+' '+((hr%12)||12)+(hr<12?'am':'pm');
+      if(!best  || a>best.avg)  best ={avg:a,label};
+      if(!worst || a<worst.avg) worst={avg:a,label};
+    });
+    return { best:best&&best.label, worst:worst&&worst.label };
+  }
+
+  function derive(d){
+    const p=d.profile||{}, ins=d.account_insights||{}, media=d.media||[], fb=d.facebook||{};
+    const ers=media.map(m=>m.engagement_rate).filter(v=>v!=null);
+    const reach = ins.reach!=null ? ins.reach
+                : (media.some(m=>m.reach!=null) ? media.reduce((s,m)=>s+(m.reach||0),0) : null);
+    const t=bestTimes(media);
+    return {
+      username:      p.username || d.label || GLLUR.account,
+      pulled_at:     d.pulled_at,
+      audience:      fmtInt((p.followers_count||0)+(fb.followers||0)),
+      igFollowersInt:fmtInt(p.followers_count),
+      fbFollowers:   fmtInt(fb.followers),
+      fbAvgReach:    fb.avg_post_reach!=null ? '~'+fmtInt(fb.avg_post_reach) : '—',
+      fbViews:       fmtInt(fb.views_28d),
+      fbEngagement:  fmtInt(fb.engagement_28d),
+      erPct:         (ins.engagement_rate!=null) ? pct(ins.engagement_rate) : (ers.length ? pct(avg(ers)) : '—'),
+      reachK:        fmtK(reach),
+      avgSaves:      media.some(m=>m.saved!=null)  ? fmtInt(Math.round(avg(media.map(m=>m.saved ||0))||0)) : '—',
+      avgShares:     media.some(m=>m.shares!=null) ? fmtInt(Math.round(avg(media.map(m=>m.shares||0))||0)) : '—',
+      profileViews:  fmtInt(ins.profile_views),
+      bestERpct:     ers.length ? pct(Math.max(...ers)) : '—',
+      worstERpct:    ers.length ? pct(Math.min(...ers)) : '—',
+      bestTime:      d.best_time_label  || t.best  || '—',
+      worstTime:     d.worst_time_label || t.worst || '—',
+      postCount:     fmtInt(media.length)
+    };
+  }
+
+  // Which KPI (by its label) gets which live value — scoped per panel so the
+  // Competitor / Facebook / Website panels are never overwritten.
+  const MAPS = {
+    'mkt-overview':  {'Total Audience':'audience','Avg Engagement Rate':'erPct','Est. Monthly Reach':'reachK','Avg Saves / Post':'avgSaves','Avg Shares / Post':'avgShares','Facebook Followers':'fbFollowers'},
+    'mkt-instagram': {'Followers':'igFollowersInt','Monthly Reach':'reachK','Engagement Rate':'erPct','Avg Saves / Post':'avgSaves','Profile Visits / mo':'profileViews'},
+    'mkt-posts':     {'Best Post ER (Reel)':'bestERpct','Worst Post ER':'worstERpct','Best Time to Post':'bestTime','Weakest Window':'worstTime','Posts Analyzed':'postCount'},
+    'mkt-facebook':  {'Page Followers':'fbFollowers','Avg Post Reach':'fbAvgReach'}
+  };
+
+  function hydrate(v){
+    Object.entries(MAPS).forEach(([panelId,map])=>{
+      const panel=document.getElementById(panelId); if(!panel) return;
+      panel.querySelectorAll('.mkt-kpi').forEach(kpi=>{
+        const lab=kpi.querySelector('.mkt-klabel'), val=kpi.querySelector('.mkt-kval');
+        if(!lab||!val) return;
+        const key=map[lab.textContent.trim()];
+        if(key && v[key]!=null && v[key]!=='—'){ val.textContent=v[key]; kpi.classList.add('is-live'); }
+      });
+    });
+  }
+
+  function ago(iso){
+    if(!iso) return '';
+    const mins=Math.round((Date.now()-new Date(iso).getTime())/60000);
+    if(mins<1) return 'just now';
+    if(mins<60) return mins+'m ago';
+    const h=Math.round(mins/60); return h<24 ? h+'h ago' : Math.round(h/24)+'d ago';
+  }
+
+  function setStatus(live, acct, note){
+    const bar=document.getElementById('gllurBar'); if(!bar) return;
+    bar.classList.toggle('gllur-live', !!live);
+    bar.querySelector('#gllurMode').textContent    = live ? 'Live · Instagram' : 'Sample data';
+    bar.querySelector('#gllurAcct').textContent    = acct ? ('@'+acct) : '';
+    bar.querySelector('#gllurUpdated').textContent = note || '';
+  }
+
+  async function loadLive(){
+    // On GitHub the puller writes a fresh data file — try that first.
+    if(GLLUR.account){
+      try{
+        const r=await fetch(`${GLLUR.dataBase}/${GLLUR.account}/latest.json`,{cache:'no-store'});
+        if(r.ok){ const j=await r.json(); const v=derive(j); hydrate(v); setStatus(true,v.username,'Updated '+ago(j.pulled_at)); return; }
+      }catch(e){}
+    }
+    // Standalone published link has no data file — fall back to embedded snapshot.
+    if(window.GLLUR_DATA){
+      try{ const v=derive(window.GLLUR_DATA); hydrate(v); setStatus(true,v.username,'Updated '+ago(window.GLLUR_DATA.pulled_at)); return; }catch(e){}
+    }
+    setStatus(false,'','Sample data');
+  }
+
+  function init(){
+    document.head.insertAdjacentHTML('beforeend',
+      '<style>'
+      +'.gllur-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 18px;padding:10px 14px;border:1px solid var(--border,#162b4a);border-radius:12px;background:rgba(0,198,162,.05);font-size:.75rem;color:#c8d6e8;}'
+      +'.gllur-chip{display:inline-flex;align-items:center;gap:7px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;font-size:.66rem;}'
+      +'.gllur-dot{width:8px;height:8px;border-radius:50%;background:#5f7fa0;}'
+      +'.gllur-live .gllur-dot{background:#00e676;animation:gllurPulse 1.8s infinite;}'
+      +'@keyframes gllurPulse{0%{box-shadow:0 0 0 0 rgba(0,230,118,.55)}70%{box-shadow:0 0 0 7px rgba(0,230,118,0)}100%{box-shadow:0 0 0 0 rgba(0,230,118,0)}}'
+      +'.gllur-acct{color:#7fe9d0;font-weight:600;}'
+      +'.gllur-spacer{flex:1;}'
+      +'.gllur-bar button{background:rgba(26,107,255,.16);color:#cfe0ff;border:1px solid rgba(26,107,255,.35);border-radius:8px;padding:5px 12px;font-size:.72rem;font-weight:600;cursor:pointer;}'
+      +'.gllur-bar button:hover{background:rgba(26,107,255,.28);}'
+      +'.mkt-kpi.is-live .mkt-kval::after{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#00e676;margin-left:7px;vertical-align:middle;box-shadow:0 0 6px rgba(0,230,118,.8);}'
+      +'</style>');
+
+    const sec=document.getElementById('tab-marketing');
+    if(sec) sec.insertAdjacentHTML('afterbegin',
+      '<div class="gllur-bar" id="gllurBar">'
+      +'<span class="gllur-chip"><span class="gllur-dot"></span><span id="gllurMode">Sample data</span></span>'
+      +'<span class="gllur-acct" id="gllurAcct"></span>'
+      +'<span class="gllur-spacer"></span>'
+      +'<span id="gllurUpdated"></span>'
+      +'<button id="gllurRefresh">Refresh</button>'
+      +'</div>');
+
+    const btn=document.getElementById('gllurRefresh');
+    if(btn) btn.addEventListener('click',loadLive);
+    loadLive();
+    setInterval(loadLive, GLLUR.refreshMs);
+  }
+
+  if(document.readyState!=='loading') init();
+  else window.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>
