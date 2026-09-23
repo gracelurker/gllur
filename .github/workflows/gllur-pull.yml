@@ -6,9 +6,9 @@
 # repo's Settings ▸ Secrets and variables ▸ Actions.
 # ─────────────────────────────────────────────────────────────────────────────
 name: GLLUR Instagram pull
-
+#schedule
 on:
-  schedule:
+  schedule:# re-trigger schedule registration
     - cron: "*/15 * * * *"   # every 30 min. Change to "*/15 * * * *" for every 15.
   workflow_dispatch:          # adds a manual "Run workflow" button in the Actions tab
 
